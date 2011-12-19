@@ -2,8 +2,8 @@
  * Gadget Function Driver for Android USB accessories
  *
  * Copyright (C) 2011 Google, Inc.
- * Author: Mike Lockwood <lockwood@android.com>
  * Copyright (C) 2018-2020, NVIDIA Corporation.  All rights reserved.
+ * Author: Mike Lockwood <lockwood@android.com>
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
