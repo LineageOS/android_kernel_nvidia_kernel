@@ -29,6 +29,7 @@
 #include <linux/mutex.h>
 #include <linux/anon_inodes.h>
 #include <linux/device.h>
+#include <linux/freezer.h>
 #include <linux/uaccess.h>
 #include <asm/io.h>
 #include <asm/mman.h>
