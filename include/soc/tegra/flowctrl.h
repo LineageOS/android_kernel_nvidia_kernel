@@ -25,6 +25,7 @@
 #define FLOW_CTRL_JTAG_RESUME		(1 << 28)
 #define FLOW_CTRL_HALT_CPU_IRQ		(1 << 10)
 #define	FLOW_CTRL_HALT_CPU_FIQ		(1 << 8)
+#define FLOW_CTRL_HALT_COP_EVENTS	0x4
 #define FLOW_CTRL_CPU0_CSR		0x8
 #define	FLOW_CTRL_CSR_INTR_FLAG		(1 << 15)
 #define FLOW_CTRL_CSR_EVENT_FLAG	(1 << 14)
@@ -51,6 +52,9 @@ void flowctrl_update(u8 offset, u32 value);
 void flowctrl_write_cc4_ctrl(unsigned int cpuid, u32 value);
 void flowctrl_write_cpu_csr(unsigned int cpuid, u32 value);
 void flowctrl_write_cpu_halt(unsigned int cpuid, u32 value);
+
+void flowctrl_cop_halt(void);
+void flowctrl_cop_unhalt(void);
 #endif
 
 #endif
