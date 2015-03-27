@@ -97,6 +97,14 @@ config STI_MBOX
 	  Mailbox implementation for STMicroelectonics family chips with
 	  hardware for interprocessor communication.
 
+config TEGRA_BPMP_MBOX
+	bool "Tegra BPMP-lite Mailbox support"
+	depends on ARCH_TEGRA_210_SOC
+	default y
+	help
+	  Say y here to support Tegra's BPMP-lite mailbox driver.
+	  If unsure say N.
+
 config TI_MESSAGE_MANAGER
 	tristate "Texas Instruments Message Manager Driver"
 	depends on ARCH_KEYSTONE
