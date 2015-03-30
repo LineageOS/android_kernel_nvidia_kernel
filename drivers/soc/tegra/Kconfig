@@ -89,3 +89,12 @@ config TEGRA_USE_NA_GPCPLL
 	  Enable noise aware (NA) mode of GM20b GPCPLL. In this mode PLL output
 	  frequency is automatically adjusted when GM20b voltage is fluctuating
 	  because of transient PMIC or power distribution tree noise.
+
+config TEGRA_BPMP_MAILMAN
+	bool "Mailman driver for Tegra BPMP-lite mailbox"
+	depends on ARCH_TEGRA_210_SOC
+	depends on TEGRA_BPMP_MBOX
+	default y
+	help
+	  Say y here to support Tegra's BPMP-lite mailman driver.
+	  If unsure say N.
