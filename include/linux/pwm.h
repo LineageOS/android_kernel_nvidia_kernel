@@ -48,6 +48,17 @@ enum {
 	PWMF_EXPORTED = 1 << 1,
 };
 
+/**
+ * enum pwm_output_type - output type of the PWM signal
+ * @PWM_OUTPUT_FIXED: PWM output is fixed until a change request
+ * @PWM_OUTPUT_MODULATED: PWM output is modulated in hardware
+ * autonomously with a predefined pattern
+ */
+enum pwm_output_type {
+	PWM_OUTPUT_FIXED = 1 << 0,
+	PWM_OUTPUT_MODULATED = 1 << 1,
+};
+
 /*
  * struct pwm_state - state of a PWM channel
  * @period: PWM period (in nanoseconds)
@@ -62,6 +73,7 @@ struct pwm_state {
 	u64 period;
 	u64 duty_cycle;
 	enum pwm_polarity polarity;
+	enum pwm_output_type output_type;
 	bool enabled;
 	unsigned int double_period;
 	unsigned int ramp_time;
@@ -209,6 +221,16 @@ static inline unsigned int pwm_get_capture_window_length(
 	return state.capture_win_len;
 }
 
+static inline enum pwm_output_type pwm_get_output_type(
+		const struct pwm_device *pwm)
+{
+	struct pwm_state state;
+
+	pwm_get_state(pwm, &state);
+
+	return state.output_type;
+}
+
 static inline void pwm_get_args(const struct pwm_device *pwm,
 				struct pwm_args *args)
 {
@@ -315,6 +337,7 @@ pwm_set_relative_duty_cycle(struct pwm_state *state, unsigned int duty_cycle,
  * @set_ramp_time: Set PWM ramp up/down time.
  * @set_double_pulse_period: Set double pulse period time.
  * @set_capture_window_length: Set PWM capture window length.
+ * @get_output_type_supported: get the supported output type of this PWM
  * @owner: helps prevent removal of modules exporting active PWMs
  * @config: configure duty cycles and period length for this PWM
  * @set_polarity: configure the polarity of this PWM
@@ -338,6 +361,8 @@ struct pwm_ops {
 	int (*set_capture_window_length)(struct pwm_chip *chip,
 					 struct pwm_device *pwm,
 					 int window_length);
+	int (*get_output_type_supported)(struct pwm_chip *chip,
+			struct pwm_device *pwm);
 	struct module *owner;
 
 	/* Only used by legacy drivers */
@@ -393,6 +418,24 @@ struct pwm_device *pwm_request(int pwm_id, const char *label);
 void pwm_free(struct pwm_device *pwm);
 int pwm_apply_state(struct pwm_device *pwm, const struct pwm_state *state);
 int pwm_adjust_config(struct pwm_device *pwm);
+
+/**
+ * pwm_get_output_type_supported() - obtain output type of a PWM device.
+ * @pwm: PWM device
+ *
+ * Returns:  output type supported by the PWM device
+ */
+static inline int pwm_get_output_type_supported(struct pwm_device *pwm)
+{
+	if (!pwm)
+		return -EINVAL;
+
+	if (pwm->chip->ops->get_output_type_supported)
+		return pwm->chip->ops->get_output_type_supported(pwm->chip,
+				pwm);
+
+	return PWM_OUTPUT_FIXED;
+}
 
 /**
  * pwm_config() - change a PWM device configuration
@@ -510,6 +553,11 @@ static inline int pwm_apply_state(struct pwm_device *pwm,
 static inline int pwm_adjust_config(struct pwm_device *pwm)
 {
 	return -ENOTSUPP;
+}
+
+static inline int pwm_get_output_type_supported(struct pwm_device *pwm)
+{
+	return -EINVAL;
 }
 
 static inline int pwm_config(struct pwm_device *pwm, int duty_ns,

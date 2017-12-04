@@ -329,6 +329,29 @@ static ssize_t rpm_show(struct device *child,
 	return sprintf(buf, "%d\n", pwm_get_rpm(pwm));
 }
 
+static ssize_t output_type_show(struct device *child,
+			     struct device_attribute *attr,
+			     char *buf)
+{
+	const struct pwm_device *pwm = child_to_pwm_device(child);
+	const char *output_type = "unknown";
+	struct pwm_state state;
+
+	pwm_get_state(pwm, &state);
+	switch (state.output_type) {
+	case PWM_OUTPUT_FIXED:
+		output_type = "fixed";
+		break;
+	case PWM_OUTPUT_MODULATED:
+		output_type = "modulated";
+		break;
+	default:
+		break;
+	}
+
+	return snprintf(buf, PAGE_SIZE, "%s\n", output_type);
+}
+
 static DEVICE_ATTR_RW(period);
 static DEVICE_ATTR_RW(duty_cycle);
 static DEVICE_ATTR_RW(enable);
@@ -338,6 +361,7 @@ static DEVICE_ATTR_RW(ramp_time);
 static DEVICE_ATTR_RW(double_period);
 static DEVICE_ATTR_RW(capture_window_length);
 static DEVICE_ATTR_RO(rpm);
+static DEVICE_ATTR_RO(output_type);
 
 static struct attribute *pwm_attrs[] = {
 	&dev_attr_period.attr,
@@ -349,6 +373,7 @@ static struct attribute *pwm_attrs[] = {
 	&dev_attr_double_period.attr,
 	&dev_attr_capture_window_length.attr,
 	&dev_attr_rpm.attr,
+	&dev_attr_output_type.attr,
 	NULL
 };
 ATTRIBUTE_GROUPS(pwm);
