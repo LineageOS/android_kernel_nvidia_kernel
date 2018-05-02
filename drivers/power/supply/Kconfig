@@ -571,4 +571,14 @@ config BATTERY_CHARGER_GAUGE_COMM
 	  gauge driver and vice versa.this interface needed to pass battery
 	  status information.
 
+config CHARGER_CROS_USBPD
+	tristate "ChromeOS EC based USBPD charger"
+	depends on MFD_CROS_EC
+	default n
+	help
+	  Say Y here to enable ChromeOS EC based USBPD charger
+	  driver. This driver gets various bits of information about
+	  what is connected to USB PD ports from the EC and converts
+	  that into power_supply properties.
+
 endif # POWER_SUPPLY
