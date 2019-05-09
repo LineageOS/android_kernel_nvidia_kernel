@@ -59,21 +59,7 @@ static const struct snd_soc_dapm_route max98357a_dapm_routes[] = {
 	{"Speaker", NULL, "HiFi Playback"},
 };
 
-static int max98357a_codec_probe(struct snd_soc_codec *codec)
-{
-	struct gpio_desc *sdmode;
-
-	sdmode = devm_gpiod_get_optional(codec->dev, "sdmode", GPIOD_OUT_LOW);
-	if (IS_ERR(sdmode))
-		return PTR_ERR(sdmode);
-
-	snd_soc_codec_set_drvdata(codec, sdmode);
-
-	return 0;
-}
-
 static struct snd_soc_codec_driver max98357a_codec_driver = {
-	.probe			= max98357a_codec_probe,
 	.component_driver = {
 		.dapm_widgets		= max98357a_dapm_widgets,
 		.num_dapm_widgets	= ARRAY_SIZE(max98357a_dapm_widgets),
@@ -110,6 +96,15 @@ static struct snd_soc_dai_driver max98357a_dai_driver = {
 
 static int max98357a_platform_probe(struct platform_device *pdev)
 {
+	struct gpio_desc *sdmode;
+
+	sdmode = devm_gpiod_get_optional(&pdev->dev,
+				"sdmode", GPIOD_OUT_LOW);
+	if (IS_ERR(sdmode))
+		return PTR_ERR(sdmode);
+
+	dev_set_drvdata(&pdev->dev, sdmode);
+
 	return snd_soc_register_codec(&pdev->dev, &max98357a_codec_driver,
 			&max98357a_dai_driver, 1);
 }
