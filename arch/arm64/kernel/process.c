@@ -626,6 +626,13 @@ void arch_setup_new_exec(void)
 		arch_prctl_spec_ctrl_set(current, PR_SPEC_STORE_BYPASS,
 					 PR_SPEC_ENABLE);
 	}
+
+	/*
+	 * If exec'ing a 32-bit task, force the asymmetric 32-bit feature
+	 * check as the task may not go through a switch_to() call.
+	 */
+	if (IS_ENABLED(CONFIG_ASYMMETRIC_AARCH32) && is_compat_task())
+		set_thread_flag(TIF_CHECK_32BIT_AFFINITY);
 }
 
 #ifdef CONFIG_ARM64_TAGGED_ADDR_ABI
