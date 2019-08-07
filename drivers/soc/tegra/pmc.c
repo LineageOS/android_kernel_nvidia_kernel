@@ -575,6 +575,7 @@ struct tegra_pmc_soc {
 	bool skip_arm_pm_restart;
 	bool has_misc_base_address;
 	bool sata_power_gate_in_misc;
+	bool supports_r2p;
 };
 
 struct tegra_io_pad_regulator {
@@ -1027,6 +1028,7 @@ enum tegra_system_reset_level tegra_pmc_get_system_reset_level(void)
 static void tegra_pmc_program_reboot_reason(const char *cmd)
 {
 	u32 value;
+	u32 panic_code = tegra_pmc_reg_readl(TEGRA_PMC_SCRATCH37);
 
 	value = tegra_pmc_reg_readl(TEGRA_PMC_SCRATCH0);
 	value &= ~PMC_SCRATCH0_MODE_MASK;
@@ -1043,6 +1045,11 @@ static void tegra_pmc_program_reboot_reason(const char *cmd)
 	}
 
 	tegra_pmc_reg_writel(value, TEGRA_PMC_SCRATCH0);
+
+	/* Setup R2P for T210/T210B01 */
+	if (pmc->soc->supports_r2p) {
+		tegra_pmc_r2p_setup(cmd, panic_code & KERNEL_PANIC_FLAG);
+	}
 }
 
 static int tegra_pmc_restart_notify(struct notifier_block *this,
@@ -4419,6 +4426,9 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
 	.rmap = tegra210_register_map,
 	.has_misc_base_address = false,
 	.sata_power_gate_in_misc = false,
+#ifdef CONFIG_TEGRA_210_R2P
+	.supports_r2p = true,
+#endif
 };
 
 #define TEGRA210B01_IO_PAD_LP_N_PV(_pin, _name, _dpd, _vbit, _io, _reg, _bds) \
@@ -4502,6 +4512,9 @@ static const struct tegra_pmc_soc tegra210b01_pmc_soc = {
 	.num_descs = ARRAY_SIZE(tegra210b01_io_pads_pinctrl_desc),
 	.descs = tegra210b01_io_pads_pinctrl_desc,
 	.rmap = tegra210_register_map,
+#ifdef CONFIG_TEGRA_210_R2P
+	.supports_r2p = true,
+#endif
 };
 
 /* Tegra 186 register map */

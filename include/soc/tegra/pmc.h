@@ -385,5 +385,6 @@ int tegra_pmc_edit_bootrom_scratch_poff(struct tegra_br_cmd_cfg *bcfg,
 					u32 bcfg_size);
 int tegra_pmc_edit_bootrom_scratch_reset(struct tegra_br_cmd_cfg *bcfg,
 					u32 bcfg_size);
+void tegra_pmc_r2p_setup(const char *cmd, bool panic_occurred);
 
 #endif /* __SOC_TEGRA_PMC_H__ */
