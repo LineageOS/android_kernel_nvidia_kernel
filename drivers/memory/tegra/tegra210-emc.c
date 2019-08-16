@@ -177,6 +177,12 @@ static struct supported_sequence supported_seqs[] = {
 		__do_periodic_emc_compensation_r21021,
 	},
 	{
+		0x7,
+		emc_set_clock_icosa,
+		__do_periodic_emc_compensation_icosa,
+		"Minerva Training Cell v1.2_lpddr4"
+	},
+	{
 		0,
 		NULL,
 		NULL,
@@ -2410,8 +2416,12 @@ static int tegra210_init_emc_data(struct platform_device *pdev)
 
 	seq = supported_seqs;
 	while (seq->table_rev) {
-		if (seq->table_rev == tegra_emc_table[0].rev)
+		if (seq->table_rev == tegra_emc_table[0].rev) {
+			if (of_find_property(pdev->dev.of_node, "nvidia,use-minerva-cc", NULL)
+				&& seq->table_rev == 0x7)
+				seq++;
 			break;
+		}
 		seq++;
 	}
 	if (!seq->set_clock) {
