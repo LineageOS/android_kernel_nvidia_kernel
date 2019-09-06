@@ -96,7 +96,7 @@ dtbs: $(DTB_OBJS) $(DTBO_OBJS) FORCE
 	if [ ! -d arch/arm64/boot/dts/nvidia/ ] ; then \
 		mkdir arch/arm64/boot/dts/nvidia/ ; \
 	fi
-	cp -u $(DTB_OBJS) $(DTBO_OBJS) arch/arm64/boot/dts/nvidia/
+	cp $(DTB_OBJS) $(DTBO_OBJS) arch/arm64/boot/dts/nvidia/
 	if [ -d arch/arm64/boot/dts/_ddot_/ ] ; then \
 		rm -rf arch/arm64/boot/dts/_ddot_/ ; \
 	fi
