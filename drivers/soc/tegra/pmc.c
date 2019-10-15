@@ -4610,7 +4610,7 @@ static int tegra_pmc_probe(struct platform_device *pdev)
 		tegra_pmc_init_boorom_cmds(&pdev->dev);
 
 	/* handle PMC reboot reason with PSCI */
-	if (!pmc->soc->skip_arm_pm_restart && arm_pm_restart)
+	if (!pmc->soc->skip_arm_pm_restart)
 		psci_handle_reboot_cmd = tegra_pmc_program_reboot_reason;
 
 	/* Some wakes require specific filter configuration */
