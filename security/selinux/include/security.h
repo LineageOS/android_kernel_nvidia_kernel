@@ -97,6 +97,7 @@ struct selinux_state {
 	bool checkreqprot;
 	bool initialized;
 	bool policycap[__POLICYDB_CAPABILITY_MAX];
+	bool android_netlink_route;
 
 	struct page *status_page;
 	struct mutex status_lock;
@@ -232,6 +233,13 @@ struct selinux_load_state {
 	struct selinux_policy *policy;
 	struct selinux_policy_convert_data *convert_data;
 };
+
+static inline bool selinux_android_nlroute_getlink(void)
+{
+	struct selinux_state *state = &selinux_state;
+
+	return state->android_netlink_route;
+}
 
 int security_mls_enabled(struct selinux_state *state);
 int security_load_policy(struct selinux_state *state,
@@ -459,5 +467,6 @@ extern void avtab_cache_init(void);
 extern void ebitmap_cache_init(void);
 extern void hashtab_cache_init(void);
 extern int security_sidtab_hash_stats(struct selinux_state *state, char *page);
+extern void selinux_nlmsg_init(void);
 
 #endif /* _SELINUX_SECURITY_H_ */
