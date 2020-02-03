@@ -1311,4 +1311,6 @@ int ufshcd_get_bootlun_en_value(struct ufs_hba *hba, u32 *value);
 int ufshcd_set_bootlun_en_value(struct ufs_hba *hba, u32 *value);
 int ufshcd_get_config_desc_lock(struct ufs_hba *hba, u32 *value);
 int ufshcd_set_config_desc(struct ufs_hba *hba, u8 *desc_buf);
+int ufshcd_uic_hibern8_enter(struct ufs_hba *hba);
+int ufshcd_uic_hibern8_exit(struct ufs_hba *hba);
 #endif /* End of Header */
