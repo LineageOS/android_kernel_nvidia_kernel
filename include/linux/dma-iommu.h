@@ -44,6 +44,9 @@ void iommu_dma_unmap_msi_pages(struct device *dev, phys_addr_t msi_base,
 		int irq, unsigned int nr_irqs);
 void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list);
 
+int iommu_dma_reserve_iova(struct device *dev, dma_addr_t base,
+			   u64 size);
+
 #else /* CONFIG_IOMMU_DMA */
 
 struct iommu_domain;
@@ -102,6 +105,12 @@ static void iommu_dma_unmap_msi_pages(struct device *dev, phys_addr_t msi_base,
 
 static inline void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
 {
+}
+
+static inline int iommu_dma_reserve_iova(struct device *dev, dma_addr_t base,
+					 u64 size)
+{
+	return -ENODEV;
 }
 
 #endif	/* CONFIG_IOMMU_DMA */
