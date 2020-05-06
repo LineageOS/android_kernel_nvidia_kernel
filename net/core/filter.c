@@ -3553,6 +3553,13 @@ static int bpf_skb_net_shrink(struct sk_buff *skb, u32 off, u32 len_diff,
 
 #define BPF_SKB_MAX_LEN SKB_MAX_ALLOC
 
+static u32 __bpf_skb_max_len(const struct sk_buff *skb)
+{
+	if (skb_at_tc_ingress(skb) || !skb->dev)
+		return SKB_MAX_ALLOC;
+	return skb->dev->mtu + skb->dev->hard_header_len;
+}
+
 BPF_CALL_4(sk_skb_adjust_room, struct sk_buff *, skb, s32, len_diff,
 	   u32, mode, u64, flags)
 {
