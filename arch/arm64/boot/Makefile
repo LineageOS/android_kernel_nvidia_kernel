@@ -28,6 +28,11 @@ DTB_LIST := $(dtb-y)
 endif
 DTB_OBJS := $(addprefix $(obj)/dts/,$(DTB_LIST))
 
+quiet_cmd_fitimage = BUILD $@
+cmd_fitimage = $(CONFIG_SHELL) $(srctree)/chromeos/scripts/generate-its-script.sh \
+	       -c lzma -a $(ARCH) $(obj)/Image $(DTB_OBJS) | \
+	       $(objtree)/scripts/dtc/dtc -I dts -O dtb -p 1024 > $@
+
 $(obj)/Image: vmlinux FORCE
 	$(call if_changed,objcopy)
 
@@ -54,6 +59,9 @@ $(obj)/Image.gz-dtb: $(obj)/Image.gz $(DTB_OBJS) FORCE
 
 $(obj)/zImage: $(obj)/Image FORCE
 	$(call if_changed,gzip)
+
+$(obj)/Image.fit: $(obj)/Image $(DTB_OBJS) FORCE
+	$(call if_changed,fitimage)
 
 install:
 	$(CONFIG_SHELL) $(srctree)/$(src)/install.sh $(KERNELRELEASE) \
