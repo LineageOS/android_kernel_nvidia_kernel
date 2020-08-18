@@ -46,6 +46,7 @@
 #include <linux/prctl.h>
 #include <linux/console.h>
 #include <trace/hooks/fpsimd.h>
+#include <trace/hooks/mpam.h>
 
 #include <asm/alternative.h>
 #include <asm/arch_gicv3.h>
