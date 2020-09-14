@@ -8077,7 +8077,7 @@ int ufshcd_rescan(struct ufs_hba *hba)
 		if (ufshcd_is_clkscaling_supported(hba))
 			ufshcd_clkscaling_init_sysfs(hba);
 
-		ufs_sysfs_add_nodes(hba->dev);
+		ufs_sysfs_add_nodes(hba);
 		hba->card_enumerated = 1;
 	} else {
 		if (!hba->card_enumerated) {
@@ -9999,7 +9999,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
 	ufshcd_set_ufs_dev_active(hba);
 
 	async_schedule(ufshcd_async_scan, hba);
-	ufs_sysfs_add_nodes(hba->dev);
+	ufs_sysfs_add_nodes(hba);
 	hba->card_enumerated = 1;
 
 	return 0;
