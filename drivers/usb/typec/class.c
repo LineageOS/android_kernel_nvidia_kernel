@@ -417,7 +417,7 @@ static umode_t typec_altmode_attr_is_visible(struct kobject *kobj,
 	return attr->mode;
 }
 
-static struct attribute_group typec_altmode_group = {
+static const struct attribute_group typec_altmode_group = {
 	.is_visible = typec_altmode_attr_is_visible,
 	.attrs = typec_altmode_attrs,
 };
@@ -609,7 +609,7 @@ static umode_t typec_partner_attr_is_visible(struct kobject *kobj, struct attrib
 	return attr->mode;
 }
 
-static struct attribute_group typec_partner_group = {
+static const struct attribute_group typec_partner_group = {
 	.is_visible = typec_partner_attr_is_visible,
 	.attrs = typec_partner_attrs
 };
@@ -791,7 +791,7 @@ static umode_t typec_plug_attr_is_visible(struct kobject *kobj, struct attribute
 	return attr->mode;
 }
 
-static struct attribute_group typec_plug_group = {
+static const struct attribute_group typec_plug_group = {
 	.is_visible = typec_plug_attr_is_visible,
 	.attrs = typec_plug_attrs
 };
@@ -1481,7 +1481,7 @@ static umode_t typec_attr_is_visible(struct kobject *kobj,
 	return attr->mode;
 }
 
-static struct attribute_group typec_group = {
+static const struct attribute_group typec_group = {
 	.is_visible = typec_attr_is_visible,
 	.attrs = typec_attrs,
 };
