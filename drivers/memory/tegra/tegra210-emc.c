@@ -134,6 +134,7 @@ static void __iomem *emc1_base;
 static void __iomem *mc_base;
 void __iomem *clk_base;
 static unsigned long emc_max_rate;
+static unsigned long emc_resume_safe_rate;
 #ifdef CONFIG_PM_SLEEP
 static unsigned long emc_override_rate;
 #endif
@@ -2641,6 +2642,11 @@ static int tegra210_init_emc_data(struct platform_device *pdev)
 
 		if (table_rate == current_rate)
 			tegra_emc_stats.last_sel = i;
+
+		if (i && !emc_resume_safe_rate &&
+		   tegra_emc_table[i].periodic_training)
+			emc_resume_safe_rate =
+				tegra_emc_table[i - 1].rate * 1000;
 	}
 
 	dev_info(&pdev->dev, "validated EMC DFS table\n");
@@ -2749,6 +2755,18 @@ static int tegra210_emc_suspend(struct device *dev)
 static int tegra210_emc_resume(struct device *dev)
 {
 	if (!IS_ERR(emc_override_clk)) {
+		/*
+		 * WAR: Fix hang on resume when restore rate needs periodic
+		 * compensation and uses WR VREF trained parameters
+		 *
+		 * Some boards rely on a mild transition for the first rate
+		 * switch and it must not need periodic compensation,
+		 * otherwise it might hang the system.
+		 */
+		if (emc_resume_safe_rate &&
+		    emc_override_rate > emc_resume_safe_rate)
+			clk_set_rate(emc_override_clk, emc_resume_safe_rate);
+
 		clk_set_rate(emc_override_clk, emc_override_rate);
 		clk_disable_unprepare(emc_override_clk);
 
