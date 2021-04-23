@@ -25,7 +25,7 @@ struct intel_host {
 
 static int ufs_intel_disable_lcc(struct ufs_hba *hba)
 {
-	u32 attr = UIC_ARG_MIB(PA_LOCAL_TX_LCC_ENABLE);
+	u32 attr = UIC_ARG_MIB(PA_Local_TX_LCC_Enable);
 	u32 lcc_enable = 0;
 
 	ufshcd_dme_get(hba, attr, &lcc_enable);
@@ -341,8 +341,9 @@ ufshcd_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 	}
 
 	mmio_base = pcim_iomap_table(pdev)[0];
+	hba->dev = &pdev->dev;
 
-	err = ufshcd_alloc_host(&pdev->dev, &hba);
+	err = ufshcd_alloc_host(hba);
 	if (err) {
 		dev_err(&pdev->dev, "Allocation failed\n");
 		return err;
