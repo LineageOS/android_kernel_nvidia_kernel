@@ -582,22 +582,21 @@ static int tegra_bpmp_load_fw(struct tegra_bpmp *bpmp, const void *data,
 	return 0;
 }
 
-static int tegra_bpmp_request_fw(struct tegra_bpmp *bpmp)
+static void tegra_bpmp_request_fw(const struct firmware *fw, void *context)
 {
+	struct tegra_bpmp *bpmp = context;
 	struct device *dev = bpmp->dev;
-	const struct firmware *fw;
 	int ret;
 
-	ret = request_firmware(&fw, BPMP_FIRMWARE_NAME, dev);
-	if (ret < 0) {
+	if (fw == NULL) {
 		dev_err(dev, "firmware not ready\n");
-		goto out;
+		return;
 	}
 
 	ret = tegra_bpmp_load_fw(bpmp, fw->data, fw->size);
 	if (ret < 0) {
 		dev_err(dev, "loading firmware failed\n");
-		goto out;
+		return;
 	}
 
 	tegra_bpmp_start(bpmp);
@@ -605,9 +604,6 @@ static int tegra_bpmp_request_fw(struct tegra_bpmp *bpmp)
 
 	/* initialize only after firmware is loaded */
 	tegra_bpmp_mailman_init(dev);
-out:
-	release_firmware(fw);
-	return ret;
 }
 
 static int tegra_bpmp_tolerate_idle(int cpu, int ccxtl, int scxtl)
@@ -687,6 +683,7 @@ static int tegra_bpmp_mailman_probe(struct platform_device *pdev)
 	struct device_node *mbox_np;
 	struct platform_device *mbox_dev;
 	struct resource *res;
+	int err;
 
 	mbox_np = of_parse_phandle(pdev->dev.of_node, "nvidia,bpmp-mbox", 0);
 	if (!mbox_np) {
@@ -722,8 +719,15 @@ static int tegra_bpmp_mailman_probe(struct platform_device *pdev)
 	bpmp->dev = &pdev->dev;
 	spin_lock_init(&bpmp->shared_memory_lock);
 
-	if (tegra_bpmp_request_fw(bpmp) < 0)
+	err = request_firmware_nowait(THIS_MODULE, true,
+				      BPMP_FIRMWARE_NAME,
+				      bpmp->dev, GFP_KERNEL, bpmp,
+				      tegra_bpmp_request_fw);
+	if (err < 0) {
+		dev_err(&pdev->dev, "can't request firmware(%d)\n",
+			err);
 		return -EINVAL;
+	}
 
 	register_cpu_notifier(&tegra_cpu_nb);
 
