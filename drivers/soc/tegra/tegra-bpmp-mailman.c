@@ -35,7 +35,7 @@
 #define __MRQ_INDEX(id)		((id) & ~__MRQ_ATTRS)
 
 #define BPMP_CONNECT_RETRY_MAX	50
-#define BPMP_FIRMWARE_NAME	"nvidia/tegra210/bpmp.bin"
+#define BPMP_FIRMWARE_NAME	"tegra21x/bpmp-lite.bin"
 
 typedef void (*bpmp_mrq_handler)(int mrq, void *data, int ch);
 
