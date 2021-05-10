@@ -318,7 +318,7 @@ static int tegra_bpmp_ping(struct device *dev)
 	unsigned long flags;
 	ktime_t tm;
 	int challenge = 1;
-	int reply;
+	int reply = 0;
 	int err;
 
 	local_irq_save(flags);
