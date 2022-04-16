@@ -360,6 +360,8 @@ struct tegra_xusb_usb3_port {
 	int oc_pin;
 	bool gen1_only;
 	int vbus_id;
+	bool clamp_en_early_enabled;
+	bool receiver_detector_disabled;
 
 	u32 tap1;
 	u32 amp;
@@ -449,6 +451,8 @@ struct tegra_xusb_padctl_ops {
 	void (*utmi_pad_power_down)(struct phy *phy);
 	int (*utmi_port_reset_quirk)(struct phy *phy);
 	int (*usb3_port_gen1_only)(struct phy *phy, bool on);
+	void (*receiver_detector)(struct phy *phy, bool on);
+	void (*clamp_en_early)(struct phy *phy, bool on);
 };
 
 struct tegra_xusb_padctl_soc {

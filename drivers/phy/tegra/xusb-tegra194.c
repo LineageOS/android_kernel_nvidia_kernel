@@ -2678,6 +2678,66 @@ static int tegra194_usb3_port_gen1_only(struct phy *phy, bool gen1)
 	return 0;
 }
 
+static int tegra194_usb2_set_host_cdp(struct tegra_xusb_padctl *padctl,
+					struct phy *phy, bool enable)
+{
+	struct tegra_xusb_lane *lane;
+	u32 reg;
+	unsigned int index;
+
+	if (!phy)
+		return -EINVAL;
+
+	lane = phy_get_drvdata(phy);
+	index = lane->index;
+
+	dev_dbg(padctl->dev, "%sable USB2 port %d Tegra CDP\n",
+		 enable ? "en" : "dis", index);
+	if (enable) {
+		reg = padctl_readl(padctl,
+				   USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
+		reg &= ~PD_CHG;
+		padctl_writel(padctl, reg,
+			      USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
+
+		reg = padctl_readl(padctl,
+				   XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
+		reg |= (USB2_OTG_PD2 | USB2_OTG_PD2_OVRD_EN);
+		padctl_writel(padctl, reg,
+			      XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
+
+		reg = padctl_readl(padctl,
+				   USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
+		reg |= ON_SRC_EN;
+		padctl_writel(padctl, reg,
+			      USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
+
+		/* Dont let BIAS pad power down */
+		padctl->cdp_used = true;
+	} else {
+		reg = padctl_readl(padctl,
+				   USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
+		reg |= PD_CHG;
+		padctl_writel(padctl, reg,
+			      USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
+
+		reg = padctl_readl(padctl,
+				   XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
+		reg &= ~USB2_OTG_PD2_OVRD_EN;
+		padctl_writel(padctl, reg,
+			      XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
+
+		reg = padctl_readl(padctl,
+				   USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
+		reg &= ~ON_SRC_EN;
+		padctl_writel(padctl, reg,
+			      USB2_BATTERY_CHRG_OTGPADX_CTL0(index));
+
+		padctl->cdp_used = false;
+	}
+
+	return 0;
+}
 static const struct tegra_xusb_padctl_ops tegra194_xusb_padctl_ops = {
 	.probe = tegra194_xusb_padctl_probe,
 	.remove = tegra194_xusb_padctl_remove,
@@ -2712,6 +2772,7 @@ static const struct tegra_xusb_padctl_ops tegra194_xusb_padctl_ops = {
 	.overcurrent_detected = tegra194_phy_xusb_overcurrent_detected,
 	.handle_overcurrent = tegra194_phy_xusb_handle_overcurrent,
 	.usb3_port_gen1_only = tegra194_usb3_port_gen1_only,
+	.set_host_cdp = tegra194_usb2_set_host_cdp,
 };
 
 static const char * const tegra194_supply_names[] = {
