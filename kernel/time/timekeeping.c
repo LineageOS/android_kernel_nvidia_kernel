@@ -325,7 +325,8 @@ static void tk_setup_internals(struct timekeeper *tk, struct clocksource *clock)
 		tk_normalize_xtime(tk);
 	}
 
-	/* update clocksource offset_ns
+	/*
+	 * update clocksource offset_ns
 	 *
 	 * NOTE: if CONFIG_SCHED_POR_TIME is enabled, this will be
 	 * broken. But we don't expect CONFIG_SCHED_POR_TIME to be
@@ -1743,6 +1744,7 @@ void timekeeping_resume(void)
 			cycle_delta -= num * max;
 		}
 		nsec += ((u64) cycle_delta * mult) >> shift;
+		tk->tkr_raw.clock->offset_ns += nsec;
 
 		ts_delta = ns_to_timespec64(nsec);
 		sleeptime_injected = true;
