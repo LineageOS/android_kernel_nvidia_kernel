@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "993f3c1d_3317fb94",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2022-04-25T05:40:04Z",
+      "side": 1,
+      "message": "Key doesn\u0027t exist publicly and signing is pointless since the secure boot devices cannot be given a user key.",
+      "revId": "3ec367485c74c2e8996064fcdd70c0eb5e457550",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
