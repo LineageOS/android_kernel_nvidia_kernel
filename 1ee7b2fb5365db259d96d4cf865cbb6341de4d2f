@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d07fe88_ace65a1a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2022-04-25T05:45:13Z",
+      "side": 1,
+      "message": "Verified on batuu. The rel-shield-r changes break the qspi mtd block device on porg and batuu. After this revert, the mtd device is accessible.",
+      "revId": "1ee7b2fb5365db259d96d4cf865cbb6341de4d2f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
