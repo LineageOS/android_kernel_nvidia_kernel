@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "97e8de5b_4f109775",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2022-06-02T03:20:59Z",
+      "side": 1,
+      "message": "Verified building foster and booting darcy. This is to simplify icosa updates.",
+      "revId": "019fde983efb5548ab177b25fafa97daa72c2bc6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
