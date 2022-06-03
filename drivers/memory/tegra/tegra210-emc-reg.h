@@ -1971,6 +1971,8 @@ extern u32 vref_regs_per_ch_type[];
 
 void emc_writel(u32 val, unsigned long offset);
 u32  emc_readl(unsigned long offset);
+void emc0_writel(u32 val, unsigned long offset);
+u32  emc0_readl(unsigned long offset);
 void emc1_writel(u32 val, unsigned long offset);
 u32  emc1_readl(unsigned long offset);
 void emc_writel_per_ch(u32 val, int type, unsigned long offset);
