@@ -279,6 +279,16 @@ inline u32 emc_readl(unsigned long offset)
 	return readl(emc_base + offset);
 }
 
+inline void emc0_writel(u32 val, unsigned long offset)
+{
+	writel(val, emc0_base + offset);
+}
+
+inline u32 emc0_readl(unsigned long offset)
+{
+	return readl(emc0_base + offset);
+}
+
 inline void emc1_writel(u32 val, unsigned long offset)
 {
 	writel(val, emc1_base + offset);
