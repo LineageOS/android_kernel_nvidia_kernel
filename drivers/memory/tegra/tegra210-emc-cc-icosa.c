@@ -34,13 +34,6 @@
 
 #define emc_cc_dbg(t, ...) pr_debug(__VA_ARGS__)
 
-#define _REG(base, off) *(volatile unsigned int __force *)((base) + (off))
-
-#define MC(off) _REG(mc_base, off)
-#define EMC(off) _REG(emc_base, off)
-#define EMC_CH0(off) _REG(emc0_base, off)
-#define EMC_CH1(off) _REG(emc1_base, off)
-
 /*
  * PTFV defines - basically just indexes into the per table PTFV array.
  */
@@ -646,13 +639,13 @@ static bool _wait_emc_status(u32 reg_offset, u32 bit_mask, bool updated_state, s
 			if (emc_channel != 1)
 				goto done;
 
-			if (((EMC_CH1(reg_offset) & bit_mask) != 0) == updated_state)
+			if (((emc1_readl(reg_offset) & bit_mask) != 0) == updated_state)
 			{
 				err = false;
 				break;
 			}
 		}
-		else if (((EMC(reg_offset) & bit_mask) != 0) == updated_state)
+		else if (((emc_readl(reg_offset) & bit_mask) != 0) == updated_state)
 		{
 			err = false;
 			break;
@@ -668,22 +661,22 @@ static void _request_mmr_data(u32 data, bool dual_channel)
 {
 	u32 emc_cfg;
 
-	emc_cfg = EMC(EMC_CFG);
+	emc_cfg = emc_readl(EMC_CFG);
 	if (emc_cfg & EMC_CFG_DRAM_ACPD)
 	{
-		EMC(EMC_CFG) = emc_cfg & ~EMC_CFG_DRAM_ACPD;
+		emc_writel(emc_cfg & ~EMC_CFG_DRAM_ACPD, EMC_CFG);
 		emc_timing_update(0);
 	}
 
 	// Get data.
-	EMC(EMC_MRR) = data;
+	emc_writel(data, EMC_MRR);
 	_wait_emc_status(EMC_EMC_STATUS, EMC_EMC_STATUS_MRR_DIVLD, true, EMC_CHANNEL0);
 	if (dual_channel)
 		_wait_emc_status(EMC_EMC_STATUS, EMC_EMC_STATUS_MRR_DIVLD, true, EMC_CHANNEL1);
 
 	if (emc_cfg & EMC_CFG_DRAM_ACPD)
 	{
-		EMC(EMC_CFG) = emc_cfg;
+		emc_writel(emc_cfg, EMC_CFG);
 		emc_timing_update(0);
 	}
 }
@@ -692,49 +685,49 @@ static u32 _digital_dll_prelock(struct emc_table *next_timing, u32 selected_clk_
 {
 	u32 dual_channel;
 
-	dual_channel = (EMC(EMC_FBIO_CFG7) >> 1) & ((EMC(EMC_FBIO_CFG7) >> 2) & 1);
+	dual_channel = (emc_readl(EMC_FBIO_CFG7) >> 1) & ((emc_readl(EMC_FBIO_CFG7) >> 2) & 1);
 
-	EMC(EMC_CFG_DIG_DLL) = (EMC(EMC_CFG_DIG_DLL) & 0xFFFFF824) | 0x3C8;
+	emc_writel((emc_readl(EMC_CFG_DIG_DLL) & 0xFFFFF824) | 0x3C8, EMC_CFG_DIG_DLL);
 
 	emc_timing_update(dual_channel);
 
-	while (EMC(EMC_CFG_DIG_DLL) & EMC_CFG_DIG_DLL_CFG_DLL_EN)
+	while (emc_readl(EMC_CFG_DIG_DLL) & EMC_CFG_DIG_DLL_CFG_DLL_EN)
 		;
 	if (dual_channel)
-		while (EMC_CH1(EMC_CFG_DIG_DLL) & EMC_CFG_DIG_DLL_CFG_DLL_EN)
+		while (emc1_readl(EMC_CFG_DIG_DLL) & EMC_CFG_DIG_DLL_CFG_DLL_EN)
 			;
 
-	EMC(EMC_DLL_CFG_0) = next_timing->burst_regs[EMC_DLL_CFG_0_INDEX];
-	EMC(EMC_DLL_CFG_1) = next_timing->burst_regs[EMC_DLL_CFG_1_INDEX];
+	emc_writel(next_timing->burst_regs[EMC_DLL_CFG_0_INDEX], EMC_DLL_CFG_0);
+	emc_writel(next_timing->burst_regs[EMC_DLL_CFG_1_INDEX], EMC_DLL_CFG_1);
 
 	tegra210_change_dll_src(next_timing, selected_clk_src_emc);
 
-	EMC(EMC_CFG_DIG_DLL) |= EMC_CFG_DIG_DLL_CFG_DLL_EN;
+	emc_writel(emc_readl(EMC_CFG_DIG_DLL) | EMC_CFG_DIG_DLL_CFG_DLL_EN, EMC_CFG_DIG_DLL);
 
 	emc_timing_update(dual_channel);
 
-	while (!(EMC(EMC_CFG_DIG_DLL) & EMC_CFG_DIG_DLL_CFG_DLL_EN))
+	while (!(emc_readl(EMC_CFG_DIG_DLL) & EMC_CFG_DIG_DLL_CFG_DLL_EN))
 		;
 	if (dual_channel)
-		while (!(EMC_CH1(EMC_CFG_DIG_DLL) & EMC_CFG_DIG_DLL_CFG_DLL_EN))
+		while (!(emc1_readl(EMC_CFG_DIG_DLL) & EMC_CFG_DIG_DLL_CFG_DLL_EN))
 			;
 
-	while ((((EMC(EMC_DIG_DLL_STATUS) >> 17) & 1) ^ 1) | (((EMC(EMC_DIG_DLL_STATUS) >> 15) & 1) ^ 1))
+	while ((((emc_readl(EMC_DIG_DLL_STATUS) >> 17) & 1) ^ 1) | (((emc_readl(EMC_DIG_DLL_STATUS) >> 15) & 1) ^ 1))
 		;
 
-	return EMC(EMC_DIG_DLL_STATUS) & 0x7FF;
+	return emc_readl(EMC_DIG_DLL_STATUS) & 0x7FF;
 }
 
 static void _digital_dll_enable_rs(u32 channel1_enabled)
 {
-	EMC(EMC_CFG_DIG_DLL) = (EMC(EMC_CFG_DIG_DLL) & 0xFFFFFF24) | 0x89;
+	emc_writel((emc_readl(EMC_CFG_DIG_DLL) & 0xFFFFFF24) | 0x89, EMC_CFG_DIG_DLL);
 
 	emc_timing_update(channel1_enabled);
 
-	while (!(EMC(EMC_CFG_DIG_DLL) & 1))
+	while (!(emc_readl(EMC_CFG_DIG_DLL) & 1))
 		;
 	if (channel1_enabled)
-		while (!(EMC_CH1(EMC_CFG_DIG_DLL) & 1))
+		while (!(emc1_readl(EMC_CFG_DIG_DLL) & 1))
 			;
 }
 
@@ -929,21 +922,21 @@ static u32 _minerva_update_clock_tree_delay(struct emc_table *src_emc_entry,
 	if (upd_type_bits & 0x5400)
 	{
 		_request_mmr_data(0x80130000, channel1_enabled); // Dev0 MRR 19.
-		temp_ch0_0 = (EMC(EMC_MRR) & 0xFF) << 8;
-		temp_ch0_1 = EMC(EMC_MRR) & 0xFF00;
+		temp_ch0_0 = (emc_readl(EMC_MRR) & 0xFF) << 8;
+		temp_ch0_1 = emc_readl(EMC_MRR) & 0xFF00;
 		if (channel1_enabled)
 		{
-			temp_ch1_0 = (EMC_CH1(EMC_MRR) & 0xFF) << 8;
-			temp_ch1_1 = EMC_CH1(EMC_MRR) & 0xFF00;
+			temp_ch1_0 = (emc1_readl(EMC_MRR) & 0xFF) << 8;
+			temp_ch1_1 = emc1_readl(EMC_MRR) & 0xFF00;
 		}
 
 		_request_mmr_data(0x80120000, channel1_enabled); // Dev0 MRR 18.
-		temp_ch0_0 |= EMC(EMC_MRR) & 0xFF;
-		temp_ch0_1 |= (EMC(EMC_MRR) & 0xFF00) >> 8;
+		temp_ch0_0 |= emc_readl(EMC_MRR) & 0xFF;
+		temp_ch0_1 |= (emc_readl(EMC_MRR) & 0xFF00) >> 8;
 		if (channel1_enabled)
 		{
-			temp_ch1_0 |= EMC_CH1(EMC_MRR) & 0xFF;
-			temp_ch1_1 |= (EMC_CH1(EMC_MRR) & 0xFF00) >> 8;
+			temp_ch1_0 |= emc1_readl(EMC_MRR) & 0xFF;
+			temp_ch1_1 |= (emc1_readl(EMC_MRR) & 0xFF00) >> 8;
 		}
 	}
 
@@ -1067,21 +1060,21 @@ calc_dev2:
 	if (update_type <= PERIODIC_TRAINING_UPDATE && upd_type_bits & 0x5400)
 	{
 		_request_mmr_data(0x40130000, channel1_enabled); // Dev1 MRR 19.
-		temp_ch0_0 = (EMC(EMC_MRR) & 0xFF) << 8;
-		temp_ch0_1 = EMC(EMC_MRR) & 0xFF00;
+		temp_ch0_0 = (emc_readl(EMC_MRR) & 0xFF) << 8;
+		temp_ch0_1 = emc_readl(EMC_MRR) & 0xFF00;
 		if (channel1_enabled)
 		{
-			temp_ch1_0 = (EMC_CH1(EMC_MRR) & 0xFF) << 8;
-			temp_ch1_1 = EMC_CH1(EMC_MRR) & 0xFF00;
+			temp_ch1_0 = (emc1_readl(EMC_MRR) & 0xFF) << 8;
+			temp_ch1_1 = emc1_readl(EMC_MRR) & 0xFF00;
 		}
 
 		_request_mmr_data(0x40120000, channel1_enabled); // Dev1 MRR 18
-		temp_ch0_0 |= EMC(EMC_MRR) & 0xFF;
-		temp_ch0_1 |= ((EMC(EMC_MRR) & 0xFF00) >> 8);
+		temp_ch0_0 |= emc_readl(EMC_MRR) & 0xFF;
+		temp_ch0_1 |= ((emc_readl(EMC_MRR) & 0xFF00) >> 8);
 		if (channel1_enabled)
 		{
-			temp_ch1_0 |= EMC_CH1(EMC_MRR) & 0xFF;
-			temp_ch1_1 |= (EMC_CH1(EMC_MRR) & 0xFF00) >> 8;
+			temp_ch1_0 |= emc1_readl(EMC_MRR) & 0xFF;
+			temp_ch1_1 |= (emc1_readl(EMC_MRR) & 0xFF00) >> 8;
 		}
 	}
 
@@ -1259,7 +1252,7 @@ u32 __do_periodic_emc_compensation_icosa(
 	bool channel1_enabled;
 
 	if (current_timing->periodic_training) {
-		dram_dev_num = (MC(MC_EMEM_ADR_CFG) & 1) + 1;
+		dram_dev_num = (mc_readl(MC_EMEM_ADR_CFG) & 1) + 1;
 		pd_mask = (dram_dev_num == TWO_RANK) ? EMC_EMC_STATUS_DRAM_IN_POWERDOWN_MASK : 0x10;
 		channel1_enabled = (current_timing->burst_regs[EMC_FBIO_CFG7_INDEX] >> 2) & 1;
 
@@ -1267,18 +1260,18 @@ u32 __do_periodic_emc_compensation_icosa(
 		emc_readl(EMC_DBG); /* Flush */
 
 		/* Safekeep current config. */
-		emc_cfg_o = EMC(EMC_CFG);
-		emc_cfg_dig_dll_o = EMC(EMC_CFG_DIG_DLL);
-		emc_cfg_update_o = EMC(EMC_CFG_UPDATE);
+		emc_cfg_o = emc_readl(EMC_CFG);
+		emc_cfg_dig_dll_o = emc_readl(EMC_CFG_DIG_DLL);
+		emc_cfg_update_o = emc_readl(EMC_CFG_UPDATE);
 
 		/* 1. Disable digital DLL. */
-		EMC(EMC_CFG_DIG_DLL) = emc_cfg_dig_dll_o & 0xFFFFFFFE;
+		emc_writel(emc_cfg_dig_dll_o & 0xFFFFFFFE, EMC_CFG_DIG_DLL);
 
 		/* 1.2. Always update auto cal in clock change. */
-		EMC(EMC_CFG_UPDATE) = (emc_cfg_update_o & 0xFFFFF9FF) | 0x400;
+		emc_writel((emc_cfg_update_o & 0xFFFFF9FF) | 0x400, EMC_CFG_UPDATE);
 
 		/* 1.3. Disable other power features. */
-		EMC(EMC_CFG) = emc_cfg_o & 0xFFFFFFF;
+		emc_writel(emc_cfg_o & 0xFFFFFFF, EMC_CFG);
 
 		/* Timing update and wait for everything to power down. */
 		emc_timing_update(channel1_enabled);
@@ -1323,22 +1316,23 @@ u32 __do_periodic_emc_compensation_icosa(
 		{
 			for (i = 0; i < 10; i++)
 			{
-				EMC(periodic_training_addr[i]) =
-					tegra210_apply_periodic_compensation_trimmer(current_timing, periodic_training_addr[i]);
+				emc_writel(tegra210_apply_periodic_compensation_trimmer(
+							current_timing, periodic_training_addr[i]),
+						periodic_training_addr[i]);
 			}
 		}
 
 		/* 6. Restore other power features. */
-		EMC(EMC_CFG) = emc_cfg_o;
+		emc_writel(emc_cfg_o, EMC_CFG);
 
 		/* 6.1. Restore the DLL. */
-		 EMC(EMC_CFG_DIG_DLL) = emc_cfg_dig_dll_o;
+		emc_writel(emc_cfg_dig_dll_o, EMC_CFG_DIG_DLL);
 
 		/* 6.2. Timing update for applying the new trimmers. */
 		emc_timing_update(channel1_enabled);
 
 		/* 6.3. Restore the UPDATE_DLL_IN_UPDATE field. */
-		EMC(EMC_CFG_UPDATE) = emc_cfg_update_o;
+		emc_writel(emc_cfg_update_o, EMC_CFG_UPDATE);
 
 		/*
 		 * 7. Copy over the periodic training registers that we updated
@@ -1420,8 +1414,8 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 	zcal_resistor_shared = (last_timing->burst_regs[EMC_ZCAL_WAIT_CNT_INDEX] >> 31) & 1;
 	enable_bg_regulator = (next_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] & 1) ^ 1;
 	channel1_enabled = (last_timing->burst_regs[EMC_FBIO_CFG7_INDEX] >> 2) & 1;
-	dram_type = EMC(EMC_FBIO_CFG5) & 3;
-	dram_dev_num = (MC(MC_EMEM_ADR_CFG) & 1) + 1;
+	dram_type = emc_readl(EMC_FBIO_CFG5) & 3;
+	dram_dev_num = (mc_readl(MC_EMEM_ADR_CFG) & 1) + 1;
 
 	src_clock_period = 1000000000 / last_timing->rate ; // In picoseconds.
 	dst_clock_period = 1000000000 / next_timing->rate ; // In picoseconds.
@@ -1462,22 +1456,22 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 	 */
 	emc_cc_dbg(STEPS, "Step 1\n");
 	emc_cc_dbg(STEPS, "Step 1.1: Disable DLL temporarily.\n");
-	emc_dbg_o = EMC(EMC_DBG);
-	emc_pin_o = EMC(EMC_PIN);
+	emc_dbg_o = emc_readl(EMC_DBG);
+	emc_pin_o = emc_readl(EMC_PIN);
 	emc_cfg = next_timing->burst_regs[EMC_CFG_INDEX] & 0xFFFFFFF;
 	emc_sel_dpd_ctrl = next_timing->emc_sel_dpd_ctrl & 0xFFFFFEC3;
-	emc_cfg_pipe_clk_o = EMC(EMC_CFG_PIPE_CLK);
+	emc_cfg_pipe_clk_o = emc_readl(EMC_CFG_PIPE_CLK);
 	tegra210_dll_disable(channel1_enabled);
 
 	emc_cc_dbg(STEPS, "Step 1.2: Disable AUTOCAL temporarily.\n");
-	EMC(EMC_AUTO_CAL_CONFIG) = (next_timing->emc_auto_cal_config & 0x7FFFF9FF) | 0x600;
+	emc_writel((next_timing->emc_auto_cal_config & 0x7FFFF9FF) | 0x600, EMC_AUTO_CAL_CONFIG);
 	emc_readl(EMC_AUTO_CAL_CONFIG); /* Flush write. */
 
 	emc_cc_dbg(STEPS, "Step 1.3: Disable other power features.\n");
-	EMC(EMC_DBG) = emc_dbg_o | 2;
-	EMC(EMC_CFG) = emc_cfg;
-	EMC(EMC_SEL_DPD_CTRL) = emc_sel_dpd_ctrl;
-	EMC(EMC_DBG) = emc_dbg_o;
+	emc_writel(emc_dbg_o | 2, EMC_DBG);
+	emc_writel(emc_cfg, EMC_CFG);
+	emc_writel(emc_sel_dpd_ctrl, EMC_SEL_DPD_CTRL);
+	emc_writel(emc_dbg_o, EMC_DBG);
 
 	if (next_timing->periodic_training) {
 		if (dram_dev_num == TWO_RANK)
@@ -1513,12 +1507,12 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 			compensate_trimmer_applicable = true;
 	}
 
-	EMC(EMC_INTSTATUS) = EMC_INTSTATUS_CLKCHANGE_COMPLETE;
-	EMC(EMC_DBG) = emc_dbg_o | 2;
-	EMC(EMC_CFG) = emc_cfg;
-	EMC(EMC_SEL_DPD_CTRL) = emc_sel_dpd_ctrl;
-	EMC(EMC_CFG_PIPE_CLK) = emc_cfg_pipe_clk_o | 1; // CLK_ALWAYS_ON.
-	EMC(EMC_FDPD_CTRL_CMD_NO_RAMP) = next_timing->emc_fdpd_ctrl_cmd_no_ramp & 0xFFFFFFFE;
+	emc_writel(EMC_INTSTATUS_CLKCHANGE_COMPLETE, EMC_INTSTATUS);
+	emc_writel(emc_dbg_o | 2, EMC_DBG);
+	emc_writel(emc_cfg, EMC_CFG);
+	emc_writel(emc_sel_dpd_ctrl, EMC_SEL_DPD_CTRL);
+	emc_writel(emc_cfg_pipe_clk_o | 1, EMC_CFG_PIPE_CLK); // CLK_ALWAYS_ON.
+	emc_writel(next_timing->emc_fdpd_ctrl_cmd_no_ramp & 0xFFFFFFFE, EMC_FDPD_CTRL_CMD_NO_RAMP);
 
 	bg_regulator_mode_change = last_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] ^
 		next_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX];
@@ -1526,11 +1520,13 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 
 	if (bg_regulator_mode_change)
 	{
-		EMC(EMC_DBG) = emc_dbg_o | 2;
+		emc_writel(emc_dbg_o | 2, EMC_DBG);
 		if (enable_bg_regulator)
-			EMC(EMC_PMACRO_BG_BIAS_CTRL_0) = last_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] & 0xFFFFFFFE;
+			emc_writel(last_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] & 0xFFFFFFFE,
+					EMC_PMACRO_BG_BIAS_CTRL_0);
 		else
-			EMC(EMC_PMACRO_BG_BIAS_CTRL_0) = last_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] & 0xFFFFFFFB;
+			emc_writel(last_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] & 0xFFFFFFFB,
+					EMC_PMACRO_BG_BIAS_CTRL_0);
 	}
 
 	// Check if we need to turn on VREF generator.
@@ -1539,15 +1535,16 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 		|| (!(last_timing->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] & 1)
 		&& (next_timing->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] & 1)))
 	{
-		EMC(EMC_PMACRO_DATA_PAD_TX_CTRL) =
+		emc_writel(
 			(((next_timing->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] & 1)
 				| (last_timing->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] & 0xFFFFFFFE)) & 0xFFFFFEFF)
-			| (((next_timing->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] >> 8) & 0x1) << 8);
+			| (((next_timing->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] >> 8) & 0x1) << 8),
+			EMC_PMACRO_DATA_PAD_TX_CTRL);
 	}
 
 	udelay(1);
 
-	EMC(EMC_DBG) = emc_dbg_o;
+	emc_writel(emc_dbg_o, EMC_DBG);
 
 	/* Step 2:
 	 *   Prelock the DLL.
@@ -1570,24 +1567,24 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 	 *   Prepare autocal for the clock change.
 	 */
 	emc_cc_dbg(STEPS, "Step 3\n");
-	EMC(EMC_AUTO_CAL_CONFIG) = (next_timing->emc_auto_cal_config & 0x7FFFF9FF) | 0x600;
-	EMC(EMC_DBG) = emc_dbg_o | 2;
-	EMC(EMC_AUTO_CAL_CONFIG2) = next_timing->emc_auto_cal_config2;
-	EMC(EMC_AUTO_CAL_CONFIG3) = next_timing->emc_auto_cal_config3;
-	EMC(EMC_AUTO_CAL_CONFIG4) = next_timing->emc_auto_cal_config4;
-	EMC(EMC_AUTO_CAL_CONFIG5) = next_timing->emc_auto_cal_config5;
-	EMC(EMC_AUTO_CAL_CONFIG6) = next_timing->emc_auto_cal_config6;
-	EMC(EMC_AUTO_CAL_CONFIG7) = next_timing->emc_auto_cal_config7;
-	EMC(EMC_AUTO_CAL_CONFIG8) = next_timing->emc_auto_cal_config8;
-	EMC(EMC_DBG) = emc_dbg_o;
-	EMC(EMC_AUTO_CAL_CONFIG) = (next_timing->emc_auto_cal_config & 0x7FFFF9FE) | 0x601;
+	emc_writel((next_timing->emc_auto_cal_config & 0x7FFFF9FF) | 0x600, EMC_AUTO_CAL_CONFIG);
+	emc_writel(emc_dbg_o | 2, EMC_DBG);
+	emc_writel(next_timing->emc_auto_cal_config2, EMC_AUTO_CAL_CONFIG2);
+	emc_writel(next_timing->emc_auto_cal_config3, EMC_AUTO_CAL_CONFIG3);
+	emc_writel(next_timing->emc_auto_cal_config4, EMC_AUTO_CAL_CONFIG4);
+	emc_writel(next_timing->emc_auto_cal_config5, EMC_AUTO_CAL_CONFIG5);
+	emc_writel(next_timing->emc_auto_cal_config6, EMC_AUTO_CAL_CONFIG6);
+	emc_writel(next_timing->emc_auto_cal_config7, EMC_AUTO_CAL_CONFIG7);
+	emc_writel(next_timing->emc_auto_cal_config8, EMC_AUTO_CAL_CONFIG8);
+	emc_writel(emc_dbg_o, EMC_DBG);
+	emc_writel((next_timing->emc_auto_cal_config & 0x7FFFF9FE) | 0x601, EMC_AUTO_CAL_CONFIG);
 
 	/* Step 4:
 	 *   Update EMC_CFG. (??)
 	 */
 	emc_cc_dbg(STEPS, "Step 4\n");
 	if (src_clock_period <= 50000)
-		EMC(EMC_CFG_2) = next_timing->emc_cfg_2;
+		emc_writel(next_timing->emc_cfg_2, EMC_CFG_2);
 	else
 		_ccfifo_write(EMC_SELF_REF, 1, 0);
 
@@ -1672,12 +1669,12 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 		|| last_timing->burst_regs[EMC_R2P_INDEX] != R2P_war
 		|| last_timing->burst_regs[EMC_TRPAB_INDEX] != TRPab_war)
 	{
-		EMC(EMC_DBG) = emc_dbg_o | 2;
-		EMC(EMC_RP) = RP_war;
-		EMC(EMC_R2P) = R2P_war;
-		EMC(EMC_W2P) = W2P_war;
-		EMC(EMC_TRPAB) = TRPab_war;
-		EMC(EMC_DBG) = emc_dbg_o;
+		emc_writel(emc_dbg_o | 2, EMC_DBG);
+		emc_writel(RP_war, EMC_RP);
+		emc_writel(R2P_war, EMC_R2P);
+		emc_writel(W2P_war, EMC_W2P);
+		emc_writel(TRPab_war, EMC_TRPAB);
+		emc_writel(emc_dbg_o, EMC_DBG);
 		emc_readl(EMC_TRPAB); /* Flush write. */
 		udelay(1);
 	}
@@ -1699,9 +1696,9 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 	else
 		mr13_catr_enable = mr13_flip_fspwr | 1;
 
-	EMC(EMC_MRW3) = mr13_flip_fspwr;
-	EMC(EMC_MRW) = next_timing->emc_mrw;
-	EMC(EMC_MRW2) = next_timing->emc_mrw2;
+	emc_writel(mr13_flip_fspwr, EMC_MRW3);
+	emc_writel(next_timing->emc_mrw, EMC_MRW);
+	emc_writel(next_timing->emc_mrw2, EMC_MRW2);
 
 	/* Step 8:
 	 *   Program the shadow registers.
@@ -1733,7 +1730,7 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 		{
 			reg_val &= 0xFFFFFFF;
 
-			EMC(reg_addr) = reg_val;
+			emc_writel(reg_val, reg_addr);
 			continue;
 		}
 
@@ -1766,13 +1763,13 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 		else
 			reg_val &= 0xFFFFFFF;
 
-		EMC(reg_addr) = reg_val;
+		emc_writel(reg_val, reg_addr);
 	}
 
 	/* SW addition: do EMC refresh adjustment here. */
 	set_over_temp_timing(next_timing, dram_over_temp_state);
 
-	EMC(EMC_MRW) = (next_timing->run_clocks & 0xFF) | 0x170000;
+	emc_writel((next_timing->run_clocks & 0xFF) | 0x170000, EMC_MRW);
 
 	/* Per channel burst registers. */
 	emc_cc_dbg(SUB_STEPS, "Writing burst_regs_per_ch\n");
@@ -1786,12 +1783,12 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 			if (reg_addr < 0x4000)
 			{
 				reg_addr -= 0x3000;
-				EMC_CH0(reg_addr) = next_timing->burst_reg_per_ch[i];
+				emc0_writel(next_timing->burst_reg_per_ch[i], reg_addr);
 			}
 			else
 			{
 				reg_addr -= 0x4000;
-				EMC_CH1(reg_addr) = next_timing->burst_reg_per_ch[i];
+				emc1_writel(next_timing->burst_reg_per_ch[i], reg_addr);
 			}
 		}
 	}
@@ -1808,12 +1805,12 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 			if (reg_addr < 0x4000)
 			{
 				reg_addr -= 0x3000;
-				EMC_CH0(reg_addr) = next_timing->vref_perch_regs[i];
+				emc0_writel(next_timing->vref_perch_regs[i], reg_addr);
 			}
 			else
 			{
 				reg_addr -= 0x4000;
-				EMC_CH1(reg_addr) = next_timing->vref_perch_regs[i];
+				emc1_writel(next_timing->vref_perch_regs[i], reg_addr);
 			}
 		}
 	}
@@ -1834,13 +1831,13 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 				reg_val  = tegra210_apply_periodic_compensation_trimmer(next_timing, reg_addr);
 				emc_cc_dbg(REG_LISTS, "(%u) 0x%08x => 0x%08x\n", i, reg_val, reg_addr);
 				emc_cc_dbg(EMA_WRITES, "0x%08x <= 0x%08x\n", (u32)(u64)reg_addr, reg_val);
-				EMC(reg_addr) = reg_val;
+				emc_writel(reg_val, reg_addr);
 			}
 			else
 			{
 				emc_cc_dbg(REG_LISTS, "(%u) 0x%08x => 0x%08x\n",
 					i, next_timing->trim_regs[i], reg_addr);
-				EMC(reg_addr) = next_timing->trim_regs[i];
+				emc_writel(next_timing->trim_regs[i], reg_addr);
 			}
 		}
 	}
@@ -1888,12 +1885,12 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 			if (reg_addr < 0x4000)
 			{
 				reg_addr -= 0x3000;
-				EMC_CH0(reg_addr) = reg_val;
+				emc0_writel(reg_val, reg_addr);
 			}
 			else
 			{
 				reg_addr -= 0x4000;
-				EMC_CH1(reg_addr) = reg_val;
+				emc1_writel(reg_val, reg_addr);
 			}
 		}
 	}
@@ -1903,7 +1900,7 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 	{
 		emc_cc_dbg(REG_LISTS, "(%u) 0x%08x => 0x%08x\n",
 			i, next_timing->burst_mc_regs[i], burst_mc_regs_addr_table[i]);
-		MC(burst_mc_regs_addr_table[i]) = next_timing->burst_mc_regs[i];
+		mc_writel(next_timing->burst_mc_regs[i], burst_mc_regs_addr_table[i]);
 	}
 
 	/* Registers to be programmed on the faster clock. */
@@ -1914,7 +1911,7 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 		{
 			emc_cc_dbg(REG_LISTS, "(%u) 0x%08x => 0x%08x\n",
 				i, next_timing->la_scale_regs[i], la_scale_regs_mc_addr_table[i]);
-			MC(la_scale_regs_mc_addr_table[i]) = next_timing->la_scale_regs[i];
+			mc_writel(next_timing->la_scale_regs[i], la_scale_regs_mc_addr_table[i]);
 		}
 	}
 
@@ -1925,11 +1922,11 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 	 *   LPDDR4 section A.
 	 */
 	emc_cc_dbg(STEPS, "Step 9\n");
-	EMC(EMC_ZCAL_INTERVAL) = last_timing->burst_regs[EMC_ZCAL_INTERVAL_INDEX] & 0xFF000000;
-	EMC(EMC_ZCAL_WAIT_CNT) = next_timing->burst_regs[EMC_ZCAL_WAIT_CNT_INDEX] & 0xFFFFF800;
-	EMC(EMC_DBG) = emc_dbg_o | 0x40000002;
-	EMC(EMC_ZCAL_INTERVAL) = last_timing->burst_regs[EMC_ZCAL_INTERVAL_INDEX] & 0xFF000000;
-	EMC(EMC_DBG) = emc_dbg_o;
+	emc_writel(last_timing->burst_regs[EMC_ZCAL_INTERVAL_INDEX] & 0xFF000000, EMC_ZCAL_INTERVAL);
+	emc_writel(next_timing->burst_regs[EMC_ZCAL_WAIT_CNT_INDEX] & 0xFFFFF800, EMC_ZCAL_WAIT_CNT);
+	emc_writel(emc_dbg_o | 0x40000002, EMC_DBG);
+	emc_writel(last_timing->burst_regs[EMC_ZCAL_INTERVAL_INDEX] & 0xFF000000, EMC_ZCAL_INTERVAL);
+	emc_writel(emc_dbg_o, EMC_DBG);
 
 	/* Step 10:
 	 *   LPDDR4 and DDR3 common section.
@@ -2128,15 +2125,15 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 	if (bg_regulator_mode_change)
 	{
 		if (enable_bg_regulator)
-			EMC(EMC_PMACRO_BG_BIAS_CTRL_0) = next_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] & 0xFFFFFFFB;
+			emc_writel(next_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] & 0xFFFFFFFB, EMC_PMACRO_BG_BIAS_CTRL_0);
 		else
-			EMC(EMC_PMACRO_BG_BIAS_CTRL_0) = next_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] & 0xFFFFFFFE;
+			emc_writel(next_timing->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] & 0xFFFFFFFE, EMC_PMACRO_BG_BIAS_CTRL_0);
 	}
 
 	/* Step 23:
 	 */
 	emc_cc_dbg(STEPS, "Step 23: Clock change\n");
-	EMC(EMC_CFG_DIG_DLL) = (EMC(EMC_CFG_DIG_DLL) & 0xFFFFFF24) | 0x88;
+	emc_writel((emc_readl(EMC_CFG_DIG_DLL) & 0xFFFFFF24) | 0x88, EMC_CFG_DIG_DLL);
 	emc_readl(EMC_CFG_DIG_DLL); /* Flush write. */
 
 	emc_readl(EMC_FBIO_CFG7); /* Flush */
@@ -2157,9 +2154,9 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 	if (next_timing->rate  > last_timing->rate )
 	{
 		for (i = 0; next_timing->num_up_down > i; i++)
-			MC(la_scale_regs_mc_addr_table[i]) = next_timing->la_scale_regs[i];
+			mc_writel(next_timing->la_scale_regs[i], la_scale_regs_mc_addr_table[i]);
 
-		dual_channel = (EMC(EMC_FBIO_CFG7) >> 1) & ((EMC(EMC_FBIO_CFG7) >> 2) & 1);
+		dual_channel = (emc_readl(EMC_FBIO_CFG7) >> 1) & ((emc_readl(EMC_FBIO_CFG7) >> 2) & 1);
 		emc_timing_update(dual_channel); //"MTC Error: MC UpDown reg timeout\n"
 	}
 
@@ -2167,37 +2164,37 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 	 *   Restore ZCAL registers.
 	 */
 	emc_cc_dbg(STEPS, "Step 26\n");
-	EMC(EMC_DBG) = emc_dbg_o | 2;
-	EMC(EMC_ZCAL_WAIT_CNT) = next_timing->burst_regs[EMC_ZCAL_WAIT_CNT_INDEX];
-	EMC(EMC_ZCAL_INTERVAL) = next_timing->burst_regs[EMC_ZCAL_INTERVAL_INDEX];
-	EMC(EMC_DBG) = emc_dbg_o;
+	emc_writel(emc_dbg_o | 2, EMC_DBG);
+	emc_writel(next_timing->burst_regs[EMC_ZCAL_WAIT_CNT_INDEX], EMC_ZCAL_WAIT_CNT);
+	emc_writel(next_timing->burst_regs[EMC_ZCAL_INTERVAL_INDEX], EMC_ZCAL_INTERVAL);
+	emc_writel(emc_dbg_o, EMC_DBG);
 
 	/* Step 27:
 	 *   Restore EMC_CFG, FDPD registers.
 	 */
 	emc_cc_dbg(STEPS, "Step 27\n");
-	EMC(EMC_DBG) = emc_dbg_o | 2;
-	EMC(EMC_CFG) = next_timing->burst_regs[EMC_CFG_INDEX];
-	EMC(EMC_DBG) = emc_dbg_o;
-	EMC(EMC_FDPD_CTRL_CMD_NO_RAMP) = next_timing->emc_fdpd_ctrl_cmd_no_ramp;
-	EMC(EMC_SEL_DPD_CTRL) = next_timing->emc_sel_dpd_ctrl;
+	emc_writel(emc_dbg_o | 2, EMC_DBG);
+	emc_writel(next_timing->burst_regs[EMC_CFG_INDEX], EMC_CFG);
+	emc_writel(emc_dbg_o, EMC_DBG);
+	emc_writel(next_timing->emc_fdpd_ctrl_cmd_no_ramp, EMC_FDPD_CTRL_CMD_NO_RAMP);
+	emc_writel(next_timing->emc_sel_dpd_ctrl, EMC_SEL_DPD_CTRL);
 
 	/* Step 28:
 	 *   Training recover. Removed.
 	 */
 	emc_cc_dbg(STEPS, "Step 28\n");
-	EMC(EMC_DBG) = emc_dbg_o | 2;
-	EMC(EMC_PMACRO_AUTOCAL_CFG_COMMON) = next_timing->burst_regs[EMC_PMACRO_AUTOCAL_CFG_COMMON_INDEX];
-	EMC(EMC_DBG) = emc_dbg_o;
+	emc_writel(emc_dbg_o | 2, EMC_DBG);
+	emc_writel(next_timing->burst_regs[EMC_PMACRO_AUTOCAL_CFG_COMMON_INDEX], EMC_PMACRO_AUTOCAL_CFG_COMMON);
+	emc_writel(emc_dbg_o, EMC_DBG);
 
 	/* Step 29:
 	 *   Power fix WAR.
 	 */
 	emc_cc_dbg(STEPS, "Step 29\n");
-	EMC(EMC_PMACRO_CFG_PM_GLOBAL_0) = 0xFF0000;
-	EMC(EMC_PMACRO_TRAINING_CTRL_0) = EMC_PMACRO_TRAINING_CTRL_0_CH0_TRAINING_E_WRPTR;
-	EMC(EMC_PMACRO_TRAINING_CTRL_1) = EMC_PMACRO_TRAINING_CTRL_1_CH1_TRAINING_E_WRPTR;
-	EMC(EMC_PMACRO_CFG_PM_GLOBAL_0) = 0;
+	emc_writel(0xFF0000, EMC_PMACRO_CFG_PM_GLOBAL_0);
+	emc_writel(EMC_PMACRO_TRAINING_CTRL_0_CH0_TRAINING_E_WRPTR, EMC_PMACRO_TRAINING_CTRL_0);
+	emc_writel(EMC_PMACRO_TRAINING_CTRL_1_CH1_TRAINING_E_WRPTR, EMC_PMACRO_TRAINING_CTRL_1);
+	emc_writel(0, EMC_PMACRO_CFG_PM_GLOBAL_0);
 
 	/* Step 30:
 	 *   Re-enable autocal and DLL .
@@ -2205,7 +2202,7 @@ void emc_set_clock_icosa(struct emc_table *next_timing,
 	emc_cc_dbg(STEPS, "Step 30: Re-enable DLL and AUTOCAL\n");
 	if (next_timing->burst_regs[EMC_CFG_DIG_DLL_INDEX] & EMC_CFG_DIG_DLL_CFG_DLL_EN)
 		_digital_dll_enable_rs(channel1_enabled);
-	EMC(EMC_AUTO_CAL_CONFIG) = next_timing->emc_auto_cal_config;
+	emc_writel(next_timing->emc_auto_cal_config, EMC_AUTO_CAL_CONFIG);
 
 	/* Step 31:
 	 *   Restore FSP to account for switch back. Only needed in training. Removed.
