@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "75c5881b_bab5db55",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2022-07-15T21:22:16Z",
+      "side": 1,
+      "message": "Chain verified working on icosa. Verified no regressions on mdarcy, darcy, foster_e_hdd, jetson_cv, and batuu.",
+      "revId": "02e48ec77e3ae560d5a60e70177f85023bd60733",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
