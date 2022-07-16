@@ -16,6 +16,23 @@
       "message": "Verified working in recovery on icosa. No regression seen on darcy.",
       "revId": "b763fe334620fc4b61e429854967d2a85d42e03a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11f3a915_e20d7833",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 22675
+      },
+      "writtenOn": "2022-07-16T12:53:26Z",
+      "side": 1,
+      "message": "commit desc should definitely mention CTC authorship for the changes he did",
+      "revId": "b763fe334620fc4b61e429854967d2a85d42e03a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
