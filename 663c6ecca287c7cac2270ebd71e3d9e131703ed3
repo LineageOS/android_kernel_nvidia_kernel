@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3c609b5_6f774402",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 31706
+      },
+      "writtenOn": "2022-09-10T15:09:13Z",
+      "side": 1,
+      "message": "I\u0027ve added the extra modules for \"porg\" as a separate config to avoid any conflicts with other tegra based devices.",
+      "revId": "663c6ecca287c7cac2270ebd71e3d9e131703ed3",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
