@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dcfba95b_d7d40463",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2022-10-02T15:32:28Z",
+      "side": 1,
+      "message": "Chain verified on darcy and lanai",
+      "revId": "6f58f4e1c6fcc2900da863c1c2a148d1bcb8c00a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
