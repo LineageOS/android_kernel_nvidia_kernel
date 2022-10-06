@@ -13,7 +13,7 @@
 /* https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58145 */
 #if GCC_VERSION < 40900
 # error Sorry, your version of GCC is too old - please use 4.9 or newer.
-#elif defined(CONFIG_ARM64) && GCC_VERSION < 50100
+#elif defined(CONFIG_ARM64) && defined(__aarch64__) && GCC_VERSION < 50100
 /*
  * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63293
  * https://lore.kernel.org/r/20210107111841.GN1551@shell.armlinux.org.uk
