@@ -2338,6 +2338,183 @@ static struct resource tegra210_init_emc_data_smc(struct platform_device *pdev)
 	return table;
 }
 
+static const struct of_device_id emc_table_match[] = {
+	{ .compatible = "nvidia,tegra210-emc-table" },
+	{},
+};
+
+static void tegra210_init_emc_data_reg(struct platform_device *pdev)
+{
+	u32 prop;
+	int ret;
+	bool has_derated_tables = false;
+	struct device_node *table_node = NULL;
+	struct resource r;
+	int i;
+	struct emc_table_r21015 *tegra_emc_table_temp;
+
+	ret = of_property_read_u32(pdev->dev.of_node, "max-clock-frequency",
+				   &prop);
+	if (!ret)
+		emc_max_rate = prop * 1000;
+
+	if (of_find_property(pdev->dev.of_node, "has-derated-tables", NULL))
+		has_derated_tables = true;
+
+	table_node = of_find_matching_node(pdev->dev.of_node, emc_table_match);
+	if (!table_node) {
+		dev_err(&pdev->dev, "Can not find EMC table node\n");
+		return;
+	}
+
+	if (of_address_to_resource(table_node, 0, &r)) {
+		dev_err(&pdev->dev, "Can not map EMC table\n");
+		return;
+	}
+
+	tegra_emc_table_temp = devm_ioremap_resource(&pdev->dev, &r);
+	tegra_emc_table_size = resource_size(&r) / sizeof(struct emc_table_r21015);
+	tegra_emc_table_normal = devm_kzalloc(&pdev->dev, sizeof(struct emc_table)*tegra_emc_table_size, GFP_KERNEL);
+
+	for (i = 0; i < tegra_emc_table_size; i++) {
+		tegra_emc_table_normal[i].rev = tegra_emc_table_temp[i].rev;
+		memcpy_fromio(tegra_emc_table_normal[i].dvfs_ver,
+				tegra_emc_table_temp[i].dvfs_ver,
+				sizeof(tegra_emc_table_normal[i].dvfs_ver));
+		tegra_emc_table_normal[i].rate = tegra_emc_table_temp[i].rate;
+		tegra_emc_table_normal[i].min_volt = tegra_emc_table_temp[i].min_volt;
+		tegra_emc_table_normal[i].gpu_min_volt = tegra_emc_table_temp[i].gpu_min_volt;
+		memcpy_fromio(tegra_emc_table_normal[i].clock_src,
+				tegra_emc_table_temp[i].clock_src,
+				sizeof(tegra_emc_table_normal[i].clock_src));
+		tegra_emc_table_normal[i].clk_src_emc = tegra_emc_table_temp[i].clk_src_emc;
+		tegra_emc_table_normal[i].needs_training = tegra_emc_table_temp[i].needs_training;
+		tegra_emc_table_normal[i].training_parttern = tegra_emc_table_temp[i].training_parttern;
+		tegra_emc_table_normal[i].trained = tegra_emc_table_temp[i].trained;
+
+		tegra_emc_table_normal[i].periodic_training = tegra_emc_table_temp[i].periodic_training;
+		tegra_emc_table_normal[i].trained_dram_clktree_c0d0u0 = tegra_emc_table_temp[i].trained_dram_clktree_c0d0u0;
+		tegra_emc_table_normal[i].trained_dram_clktree_c0d0u1 = tegra_emc_table_temp[i].trained_dram_clktree_c0d0u1;
+		tegra_emc_table_normal[i].trained_dram_clktree_c0d1u0 = tegra_emc_table_temp[i].trained_dram_clktree_c0d1u0;
+		tegra_emc_table_normal[i].trained_dram_clktree_c0d1u1 = tegra_emc_table_temp[i].trained_dram_clktree_c0d1u1;
+		tegra_emc_table_normal[i].trained_dram_clktree_c1d0u0 = tegra_emc_table_temp[i].trained_dram_clktree_c1d0u0;
+		tegra_emc_table_normal[i].trained_dram_clktree_c1d0u1 = tegra_emc_table_temp[i].trained_dram_clktree_c1d0u1;
+		tegra_emc_table_normal[i].trained_dram_clktree_c1d1u0 = tegra_emc_table_temp[i].trained_dram_clktree_c1d1u0;
+		tegra_emc_table_normal[i].trained_dram_clktree_c1d1u1 = tegra_emc_table_temp[i].trained_dram_clktree_c1d1u1;
+		tegra_emc_table_normal[i].current_dram_clktree_c0d0u0 = tegra_emc_table_temp[i].current_dram_clktree_c0d0u0;
+		tegra_emc_table_normal[i].current_dram_clktree_c0d0u1 = tegra_emc_table_temp[i].current_dram_clktree_c0d0u1;
+		tegra_emc_table_normal[i].current_dram_clktree_c0d1u0 = tegra_emc_table_temp[i].current_dram_clktree_c0d1u0;
+		tegra_emc_table_normal[i].current_dram_clktree_c0d1u1 = tegra_emc_table_temp[i].current_dram_clktree_c0d1u1;
+		tegra_emc_table_normal[i].current_dram_clktree_c1d0u0 = tegra_emc_table_temp[i].current_dram_clktree_c1d0u0;
+		tegra_emc_table_normal[i].current_dram_clktree_c1d0u1 = tegra_emc_table_temp[i].current_dram_clktree_c1d0u1;
+		tegra_emc_table_normal[i].current_dram_clktree_c1d1u0 = tegra_emc_table_temp[i].current_dram_clktree_c1d1u0;
+		tegra_emc_table_normal[i].current_dram_clktree_c1d1u1 = tegra_emc_table_temp[i].current_dram_clktree_c1d1u1;
+		tegra_emc_table_normal[i].run_clocks = tegra_emc_table_temp[i].run_clocks;
+		tegra_emc_table_normal[i].tree_margin = tegra_emc_table_temp[i].tree_margin;
+
+		tegra_emc_table_normal[i].num_burst = tegra_emc_table_temp[i].num_burst;
+		tegra_emc_table_normal[i].num_burst_per_ch = tegra_emc_table_temp[i].num_burst_per_ch;
+		tegra_emc_table_normal[i].num_trim = tegra_emc_table_temp[i].num_trim;
+		tegra_emc_table_normal[i].num_trim_per_ch = tegra_emc_table_temp[i].num_trim_per_ch;
+		tegra_emc_table_normal[i].num_mc_regs = tegra_emc_table_temp[i].num_mc_regs;
+		tegra_emc_table_normal[i].num_up_down = tegra_emc_table_temp[i].num_up_down;
+		tegra_emc_table_normal[i].vref_num = tegra_emc_table_temp[i].vref_num;
+		tegra_emc_table_normal[i].training_mod_num = tegra_emc_table_temp[i].training_mod_num;
+		tegra_emc_table_normal[i].dram_timing_num = tegra_emc_table_temp[i].dram_timing_num;
+
+		memcpy_fromio(tegra_emc_table_normal[i].burst_regs,
+				tegra_emc_table_temp[i].burst_regs,
+				sizeof(tegra_emc_table_normal[i].burst_regs));
+		memcpy_fromio(tegra_emc_table_normal[i].burst_reg_per_ch,
+				tegra_emc_table_temp[i].burst_reg_per_ch,
+				sizeof(tegra_emc_table_normal[i].burst_reg_per_ch));
+		memcpy_fromio(tegra_emc_table_normal[i].shadow_regs_ca_train,
+				tegra_emc_table_temp[i].shadow_regs_ca_train,
+				sizeof(tegra_emc_table_normal[i].shadow_regs_ca_train));
+		memcpy_fromio(tegra_emc_table_normal[i].shadow_regs_quse_train,
+				tegra_emc_table_temp[i].shadow_regs_quse_train,
+				sizeof(tegra_emc_table_normal[i].shadow_regs_quse_train));
+		memcpy_fromio(tegra_emc_table_normal[i].shadow_regs_rdwr_train,
+				tegra_emc_table_temp[i].shadow_regs_rdwr_train,
+				sizeof(tegra_emc_table_normal[i].shadow_regs_rdwr_train));
+
+		memcpy_fromio(tegra_emc_table_normal[i].trim_regs,
+				tegra_emc_table_temp[i].trim_regs,
+				sizeof(tegra_emc_table_normal[i].trim_regs));
+		memcpy_fromio(tegra_emc_table_normal[i].trim_perch_regs,
+				tegra_emc_table_temp[i].trim_perch_regs,
+				sizeof(tegra_emc_table_normal[i].trim_perch_regs));
+
+		memcpy_fromio(tegra_emc_table_normal[i].vref_perch_regs,
+				tegra_emc_table_temp[i].vref_perch_regs,
+				sizeof(tegra_emc_table_normal[i].vref_perch_regs));
+
+		memcpy_fromio(tegra_emc_table_normal[i].dram_timings,
+				tegra_emc_table_temp[i].dram_timings,
+				sizeof(tegra_emc_table_normal[i].dram_timings));
+		memcpy_fromio(tegra_emc_table_normal[i].training_mod_regs,
+				tegra_emc_table_temp[i].training_mod_regs,
+				sizeof(tegra_emc_table_normal[i].training_mod_regs));
+		memcpy_fromio(tegra_emc_table_normal[i].save_restore_mod_regs,
+				tegra_emc_table_temp[i].save_restore_mod_regs,
+				sizeof(tegra_emc_table_normal[i].save_restore_mod_regs));
+		memcpy_fromio(tegra_emc_table_normal[i].burst_mc_regs,
+				tegra_emc_table_temp[i].burst_mc_regs,
+				sizeof(tegra_emc_table_normal[i].burst_mc_regs));
+		memcpy_fromio(tegra_emc_table_normal[i].la_scale_regs,
+				tegra_emc_table_temp[i].la_scale_regs,
+				sizeof(tegra_emc_table_normal[i].la_scale_regs));
+
+		tegra_emc_table_normal[i].min_mrs_wait = tegra_emc_table_temp[i].min_mrs_wait;
+		tegra_emc_table_normal[i].emc_mrw = tegra_emc_table_temp[i].emc_mrw;
+		tegra_emc_table_normal[i].emc_mrw2 = tegra_emc_table_temp[i].emc_mrw2;
+		tegra_emc_table_normal[i].emc_mrw3 = tegra_emc_table_temp[i].emc_mrw3;
+		tegra_emc_table_normal[i].emc_mrw4 = tegra_emc_table_temp[i].emc_mrw4;
+		tegra_emc_table_normal[i].emc_mrw9 = tegra_emc_table_temp[i].emc_mrw9;
+		tegra_emc_table_normal[i].emc_mrs = tegra_emc_table_temp[i].emc_mrs;
+		tegra_emc_table_normal[i].emc_emrs = tegra_emc_table_temp[i].emc_emrs;
+		tegra_emc_table_normal[i].emc_emrs2 = tegra_emc_table_temp[i].emc_emrs2;
+		tegra_emc_table_normal[i].emc_auto_cal_config = tegra_emc_table_temp[i].emc_auto_cal_config;
+		tegra_emc_table_normal[i].emc_auto_cal_config2 = tegra_emc_table_temp[i].emc_auto_cal_config2;
+		tegra_emc_table_normal[i].emc_auto_cal_config3 = tegra_emc_table_temp[i].emc_auto_cal_config3;
+		tegra_emc_table_normal[i].emc_auto_cal_config4 = tegra_emc_table_temp[i].emc_auto_cal_config4;
+		tegra_emc_table_normal[i].emc_auto_cal_config5 = tegra_emc_table_temp[i].emc_auto_cal_config5;
+		tegra_emc_table_normal[i].emc_auto_cal_config6 = tegra_emc_table_temp[i].emc_auto_cal_config6;
+		tegra_emc_table_normal[i].emc_auto_cal_config7 = tegra_emc_table_temp[i].emc_auto_cal_config7;
+		tegra_emc_table_normal[i].emc_auto_cal_config8 = tegra_emc_table_temp[i].emc_auto_cal_config8;
+		tegra_emc_table_normal[i].emc_cfg_2 = tegra_emc_table_temp[i].emc_cfg_2;
+		tegra_emc_table_normal[i].emc_sel_dpd_ctrl = tegra_emc_table_temp[i].emc_sel_dpd_ctrl;
+		tegra_emc_table_normal[i].emc_fdpd_ctrl_cmd_no_ramp = tegra_emc_table_temp[i].emc_fdpd_ctrl_cmd_no_ramp;
+		tegra_emc_table_normal[i].dll_clk_src = tegra_emc_table_temp[i].dll_clk_src;
+		tegra_emc_table_normal[i].clk_out_enb_x_0_clk_enb_emc_dll = tegra_emc_table_temp[i].clk_out_enb_x_0_clk_enb_emc_dll;
+		tegra_emc_table_normal[i].latency = tegra_emc_table_temp[i].latency;
+	}
+
+	if (has_derated_tables) {
+		tegra_emc_table_size /= 2;
+		tegra_emc_table_derated = tegra_emc_table_normal +
+					  tegra_emc_table_size;
+
+		for (i = 0; i < tegra_emc_table_size; i++) {
+			if (tegra_emc_table_derated[i].rate !=
+			    tegra_emc_table_normal[i].rate) {
+				dev_err(&pdev->dev, "EMC table check failed\n");
+				tegra_emc_table_normal = NULL;
+				tegra_emc_table_derated = NULL;
+				tegra_emc_table_size = 0;
+				break;
+			}
+		}
+	}
+
+	if (tegra_dram_type == DRAM_TYPE_LPDDR4 && tegra_emc_table_derated)
+		emc_copy_table_params(tegra_emc_table_normal,
+				      tegra_emc_table_derated,
+				      tegra_emc_table_size,
+				      EMC_COPY_TABLE_PARAM_PERIODIC_FIELDS |
+				      EMC_COPY_TABLE_PARAM_TRIM_REGS);
+}
+
 static int tegra210_init_emc_data(struct platform_device *pdev)
 {
 	int i;
@@ -2389,6 +2566,8 @@ static int tegra210_init_emc_data(struct platform_device *pdev)
 		tegra_emc_table_derated = NULL;
 		tegra_emc_table_size = (table_res.end - table_res.start + 1) /
 					sizeof(struct emc_table);
+	} else if (of_find_property(pdev->dev.of_node, "nvidia,use-reg-emc-tables", NULL)) {
+		tegra210_init_emc_data_reg(pdev);
 	} else {
 		tegra_emc_dt_parse_pdata(pdev, &tegra_emc_table_normal,
 			&tegra_emc_table_derated, &tegra_emc_table_size);
