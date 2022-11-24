@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2429c77d_09969133",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2022-11-24T16:51:28Z",
+      "side": 1,
+      "message": "Verified on quill. Previously, if one tried to remount a verity enabled partition via adb, the system would report success, but the fs would be left in a broken state. This causes the attempt to fail with an io error.",
+      "revId": "36cc0983bc793bd66a20f33cc760d097528524fb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
