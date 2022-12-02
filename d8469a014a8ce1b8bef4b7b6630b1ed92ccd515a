@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed72c80b_8c283e5e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2022-12-02T07:12:27Z",
+      "side": 1,
+      "message": "Chain verified compiling with gcc 9.3, booted on foster and quill.",
+      "revId": "d8469a014a8ce1b8bef4b7b6630b1ed92ccd515a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
