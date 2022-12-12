@@ -16,6 +16,24 @@
       "message": "Not that it matters but seems like commit d0c27c9211fe (\"power: supply: max17042_battery: fix typo in MAX17042_IAvg_empty\") (https://github.com/torvalds/linux/commit/d0c27c9211fef3ce8083cc3ad2ca3067d211edc9) is missing from the chain",
       "revId": "fca1b963f4683ed2de55ac4526fe9aad158861db",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b86416aa_bf4c8455",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2022-12-12T16:51:38Z",
+      "side": 1,
+      "message": "Oh, looks like that was new to 5.16 and I was referencing stable 5.15, so that\u0027s why I missed it. I\u0027ll go ahead and grab it to make sure the driver reads correctly. Thanks for the link.",
+      "parentUuid": "00559c7d_ff4f9216",
+      "revId": "fca1b963f4683ed2de55ac4526fe9aad158861db",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
