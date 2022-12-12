@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "00559c7d_ff4f9216",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 26918
+      },
+      "writtenOn": "2022-12-12T16:24:51Z",
+      "side": 1,
+      "message": "Not that it matters but seems like commit d0c27c9211fe (\"power: supply: max17042_battery: fix typo in MAX17042_IAvg_empty\") (https://github.com/torvalds/linux/commit/d0c27c9211fef3ce8083cc3ad2ca3067d211edc9) is missing from the chain",
+      "revId": "fca1b963f4683ed2de55ac4526fe9aad158861db",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
