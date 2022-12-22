@@ -2396,7 +2396,7 @@ static int tegra_pmc_configure_bootrom_scratch(struct device *dev,
 		reg_offset++;
 
 		cmd_pw = (block->reg_8bits && block->data_8bits) ? 2 : 1;
-		reg_data_mask = (cmd_pw == 1) ? 0xFFFF : 0xFFFFFFFFUL;
+		reg_data_mask = (cmd_pw == 2) ? 0xFFFF : 0xFFFFFFFFUL;
 		csum = 0;
 
 		for (j = 0; j < block->ncommands; j++) {
@@ -2428,6 +2428,66 @@ reg_update:
 	tegra_pmc_write_bootrom_command(0, cmd);
 
 	return 0;
+}
+
+static int tegra_pmc_configure_bootrom_scratch_r2p(
+		struct tegra_bootrom_commands *br_commands,
+		struct tegra_br_cmd_cfg *bcfg, u32 bcfg_size)
+{
+	struct tegra_bootrom_block *block;
+	int i, j;
+	u32 cmd;
+	int bcfg_idx = 0;
+	u32 reg_data_mask, edit_data_mask;
+	int cmd_pw;
+
+	for (i = 0; i < br_commands->nblocks; ++i) {
+		block = &br_commands->blocks[i];
+		cmd_pw = (block->reg_8bits && block->data_8bits) ? 2 : 1;
+		reg_data_mask = (cmd_pw == 2) ? 0xFFFF : 0xFFFFFFFFUL;
+
+		for (j = 0; j < block->ncommands; j++) {
+			cmd = block->commands[j] & reg_data_mask;
+			if (bcfg_idx < bcfg_size &&
+			    bcfg[bcfg_idx].dev == i &&
+			    bcfg[bcfg_idx].idx == j) {
+			    edit_data_mask = (cmd_pw == 2) ?
+						 0xFF00UL : 0xFFFF0000UL;
+				cmd &= ~edit_data_mask;
+				cmd |= (bcfg[bcfg_idx].val <<
+					   (cmd_pw == 2 ? 8 : 16)) & edit_data_mask;
+				bcfg_idx++;
+			}
+			block->commands[j] &= ~reg_data_mask;
+			block->commands[j] |= cmd & reg_data_mask;
+		}
+	}
+
+	return tegra_pmc_configure_bootrom_scratch(NULL, br_commands);
+}
+
+int tegra_pmc_edit_bootrom_scratch_poff(struct tegra_br_cmd_cfg *bcfg,
+					u32 bcfg_size)
+{
+	if (br_off_commands) {
+		tegra_pmc_configure_bootrom_scratch_r2p(br_off_commands,
+						    bcfg, bcfg_size);
+		return 0;
+	}
+
+	return -EINVAL;
+}
+
+int tegra_pmc_edit_bootrom_scratch_reset(struct tegra_br_cmd_cfg *bcfg,
+					u32 bcfg_size)
+{
+	if (br_rst_commands) {
+		tegra_pmc_configure_bootrom_scratch_r2p(br_rst_commands,
+						    bcfg, bcfg_size);
+		return 0;
+	}
+
+	return -EINVAL;
 }
 
 static int tegra_pmc_init_bootrom_power_off_cmd(struct device *dev)
