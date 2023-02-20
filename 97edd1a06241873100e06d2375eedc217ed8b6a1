@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "41412b6b_71bdfe8e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2023-02-20T04:26:59Z",
+      "side": 1,
+      "message": "Verified bq24190 on loki_e and icosa. Verified max17042 on icosa.",
+      "revId": "97edd1a06241873100e06d2375eedc217ed8b6a1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
