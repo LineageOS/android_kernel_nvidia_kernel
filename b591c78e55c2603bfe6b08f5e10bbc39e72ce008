@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d657177_77dc83c9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2023-03-05T05:14:14Z",
+      "side": 1,
+      "message": "Verified on icosa. Device uses reasonable charging profiles on a desktop usb3 port and a 45W chromebook charger.",
+      "revId": "b591c78e55c2603bfe6b08f5e10bbc39e72ce008",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
