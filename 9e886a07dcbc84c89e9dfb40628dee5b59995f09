@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2fe60849_af6ae204",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2023-03-22T07:44:15Z",
+      "side": 1,
+      "message": "Chain verified build fit image for dragonshield target and booting on smaug. Verified no regressions build foster target and booting on mdarcy.",
+      "revId": "9e886a07dcbc84c89e9dfb40628dee5b59995f09",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
