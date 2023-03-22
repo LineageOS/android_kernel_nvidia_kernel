@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "09300db4_24967091",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2023-03-22T21:05:44Z",
+      "side": 1,
+      "message": "Verified charging status is reported correctly for smaug. Verified no regression on mdarcy.",
+      "revId": "093bb4a72a46aab5b68a086a58be422726d45521",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
