@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "27e6fb9e_f256dbc9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2023-03-22T21:41:58Z",
+      "side": 1,
+      "message": "This has to use an intermediary struct because the smaug bootloader uses an older version of the struct. Nvidia added an entry in the middle of the newer table.",
+      "revId": "f9a9312b3ab72c9bc86fc57657b0a1f20eace8bd",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
