@@ -24,7 +24,7 @@
 #include <linux/reset.h>
 #include <linux/mailbox_client.h>
 
-#include <soc/tegra/bpmp.h>
+#include <soc/tegra/bpmp-lite.h>
 #include <soc/tegra/flowctrl.h>
 
 #define FWTAG_SIZE		32
@@ -145,7 +145,7 @@ static int tegra_bpmp_read_response(struct tegra_bpmp_mbox_client *cl,
 	return resp->code;
 }
 
-int tegra_bpmp_send(int mrq, void *data, int sz)
+int tegra_bpmp_lite_send(int mrq, void *data, int sz)
 {
 	struct tegra_bpmp_mbox_client *cl;
 	struct tegra_bpmp_mbox_msg msg;
@@ -168,10 +168,10 @@ int tegra_bpmp_send(int mrq, void *data, int sz)
 	preempt_enable();
 	return ret;
 }
-EXPORT_SYMBOL(tegra_bpmp_send);
+EXPORT_SYMBOL(tegra_bpmp_lite_send);
 
 /* NOTE: should be called with local irqs disabled */
-int tegra_bpmp_send_receive_atomic(int mrq, void *ob_data, int ob_sz,
+int tegra_bpmp_lite_send_receive_atomic(int mrq, void *ob_data, int ob_sz,
 				   void *ib_data, int ib_sz)
 {
 	struct tegra_bpmp_mbox_client *cl;
@@ -196,9 +196,9 @@ int tegra_bpmp_send_receive_atomic(int mrq, void *ob_data, int ob_sz,
 
 	return tegra_bpmp_read_response(cl, ib_data, ib_sz);
 }
-EXPORT_SYMBOL(tegra_bpmp_send_receive_atomic);
+EXPORT_SYMBOL(tegra_bpmp_lite_send_receive_atomic);
 
-int tegra_bpmp_send_receive(int mrq, void *ob_data, int ob_sz,
+int tegra_bpmp_lite_send_receive(int mrq, void *ob_data, int ob_sz,
 			    void *ib_data, int ib_sz)
 {
 	struct tegra_bpmp_mbox_client *cl;
@@ -227,7 +227,7 @@ int tegra_bpmp_send_receive(int mrq, void *ob_data, int ob_sz,
 
 	return ret;
 }
-EXPORT_SYMBOL(tegra_bpmp_send_receive);
+EXPORT_SYMBOL(tegra_bpmp_lite_send_receive);
 
 /* NOTE: this function may be called in irq context */
 static u32 tegra_bpmp_mail_readl(int ch, int offset)
@@ -323,7 +323,7 @@ static int tegra_bpmp_ping(struct device *dev)
 
 	local_irq_save(flags);
 	tm = ktime_get();
-	err = tegra_bpmp_send_receive_atomic(MRQ_PING,
+	err = tegra_bpmp_lite_send_receive_atomic(MRQ_PING,
 					     &challenge, sizeof(challenge),
 					     &reply, sizeof(reply));
 	tm = ktime_sub(ktime_get(), tm);
@@ -341,7 +341,7 @@ static int tegra_bpmp_get_fwtag(void *fwtag)
 	int err;
 
 	spin_lock_irqsave(&bpmp->shared_memory_lock, flags);
-	err = tegra_bpmp_send_receive_atomic(MRQ_QUERY_TAG, &shared_phys,
+	err = tegra_bpmp_lite_send_receive_atomic(MRQ_QUERY_TAG, &shared_phys,
 					     sizeof(shared_phys), NULL, 0);
 	if (!err)
 		memcpy(fwtag, shared_virt, FWTAG_SIZE);
@@ -618,7 +618,7 @@ static int tegra_bpmp_tolerate_idle(int cpu, int ccxtl, int scxtl)
 	data[1] = cpu_to_le32(ccxtl);
 	data[2] = cpu_to_le32(scxtl);
 
-	return tegra_bpmp_send(MRQ_TOLERATE_IDLE, data, sizeof(data));
+	return tegra_bpmp_lite_send(MRQ_TOLERATE_IDLE, data, sizeof(data));
 }
 
 static int tegra_cpu_notify(struct notifier_block *nb, unsigned long action,
@@ -655,8 +655,8 @@ static int __maybe_unused tegra_bpmp_enable_suspend(int mode, int flags, bool sc
 	s32 mb[] = { cpu_to_le32(mode), cpu_to_le32(flags) };
 	s32 val = cpu_to_le32(scx_enable);
 
-	tegra_bpmp_send(MRQ_SCX_ENABLE, &val, sizeof(val));
-	tegra_bpmp_send(MRQ_ENABLE_SUSPEND, &mb, sizeof(mb));
+	tegra_bpmp_lite_send(MRQ_SCX_ENABLE, &val, sizeof(val));
+	tegra_bpmp_lite_send(MRQ_ENABLE_SUSPEND, &mb, sizeof(mb));
 	return 0;
 }
 
@@ -671,7 +671,7 @@ static int __maybe_unused tegra_bpmp_resume(struct device *dev)
 {
 	s32 val = 0;
 
-	tegra_bpmp_send(MRQ_SCX_ENABLE, &val, sizeof(val));
+	tegra_bpmp_lite_send(MRQ_SCX_ENABLE, &val, sizeof(val));
 	bpmp_suspended = false;
 	return 0;
 }

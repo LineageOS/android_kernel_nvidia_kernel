@@ -22,7 +22,7 @@
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 
-#include <soc/tegra/bpmp.h>
+#include <soc/tegra/bpmp-lite.h>
 #include <soc/tegra/irq.h>
 
 #include "mailbox.h"
