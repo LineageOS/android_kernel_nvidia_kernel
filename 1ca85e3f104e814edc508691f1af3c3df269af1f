@@ -16,6 +16,23 @@
       "message": "Used by smaug and by t210b01 nx variants.",
       "revId": "1ca85e3f104e814edc508691f1af3c3df269af1f",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1f0fd64_801deea8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2023-03-23T03:38:27Z",
+      "side": 1,
+      "message": "Verified working usb on smaug.",
+      "revId": "1ca85e3f104e814edc508691f1af3c3df269af1f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
