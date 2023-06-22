@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c8a6cd1d_3ea40ed5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2023-06-22T22:20:51Z",
+      "side": 1,
+      "message": "This is a backport of a change from 4.15. Fixes an issue with a bandwidth heavy usb device observed by a t186 user.",
+      "revId": "65d7cfb3654625bd43b9366f9b7b8d29a54e8987",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
