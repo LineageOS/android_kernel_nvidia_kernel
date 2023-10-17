@@ -1072,6 +1072,14 @@ static struct notifier_block tegra_pmc_restart_handler = {
 	.priority = 128,
 };
 
+static void tegra_pmc_clear_panic(void)
+{
+	u32 pmc_reg_val;
+
+	pmc_reg_val = tegra_pmc_reg_readl(TEGRA_PMC_SCRATCH37);
+	tegra_pmc_reg_writel((pmc_reg_val & ~KERNEL_PANIC_FLAG), TEGRA_PMC_SCRATCH37);
+}
+
 static int tegra_pmc_panic_handler(struct notifier_block *this,
 				    unsigned long action, void *data)
 {
@@ -4026,6 +4034,7 @@ static int tegra_pmc_probe(struct platform_device *pdev)
 
 	/* For writing to kernel panic flag for cboot on t21x chips */
 	if (tegra_hidrev_get_chipid(tegra_read_chipid()) == TEGRA210) {
+		tegra_pmc_clear_panic();
 		err = atomic_notifier_chain_register(&panic_notifier_list,
 			&tegra_pmc_panic_notifier);
 		if (err != 0) {
