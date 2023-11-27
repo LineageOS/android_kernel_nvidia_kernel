@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e78d2b9_b5d08b7a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2023-11-27T19:37:12Z",
+      "side": 1,
+      "message": "This will currently fail to compile if the driver is disabled. Calls into the new driver are added to tegra pmc. This call needs either guarded, or better, a stub added to the header in an ifdef.",
+      "revId": "8884dff895c018547110a0da9db526b756ed861b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
