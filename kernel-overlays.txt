@@ -1,3 +1,2 @@
 nvidia
 nvlink
-nvgpu
