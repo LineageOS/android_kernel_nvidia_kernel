@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "63365a8c_7984fa82",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-03-03T05:01:25Z",
+      "side": 1,
+      "message": "Setting the defconfig entries and re-adding an old function are two different concepts and should be separate commits. Also, \u003dn isn\u0027t really proper defconfig. \u0027is not set\u0027 is correct.",
+      "revId": "c348978fa17fe2826b57827a65e10a38d90fe793",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
