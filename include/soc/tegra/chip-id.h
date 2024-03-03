@@ -305,6 +305,10 @@ static inline bool tegra_platform_is_fpga(void)
 {
 	return tegra_get_platform() == TEGRA_PLATFORM_FPGA;
 }
+static inline bool tegra_platform_is_unit_fpga(void)
+{
+	return false;
+}
 static inline bool tegra_platform_is_vdk(void)
 {
 	int plat = tegra_get_platform();
