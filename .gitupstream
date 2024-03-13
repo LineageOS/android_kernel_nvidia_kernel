@@ -1,0 +1,10 @@
+google			https://android.googlesource.com/kernel/common
+mainline		https://github.com/torvalds/linux.git
+stable			https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+nvidia-310		https://nv-tegra.nvidia.com/r/linux-3.10.git
+nvidia-310-shield	https://nv-tegra.nvidia.com/r/linux-3.10-shield.git
+nvidia-44		https://nv-tegra.nvidia.com/r/linux-4.4.git
+nvidia-49		https://nv-tegra.nvidia.com/r/linux-4.9.git
+nvidia-510		https://nv-tegra.nvidia.com/r/linux-5.10.git				jetson_35.4.1
+nvidia-jammy		https://nv-tegra.nvidia.com/r/3rdparty/canonical/linux-jammy.git
+ubuntu-jammy		https://git.launchpad.net/ubuntu/+source/linux-nvidia-tegra
