@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08eba3be_0d1f7389",
+        "filename": "arch/arm64/configs/smaug_variant_defconfig",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-03-31T02:30:24Z",
+      "side": 1,
+      "message": "Needs the \u0027is not set\u0027 part too.",
+      "revId": "443898e134acd3765d1fb0d9d0dc08faed9b8bf0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
