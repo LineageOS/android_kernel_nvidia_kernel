@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "61faf17f_4a3bce91",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-04-13T19:54:43Z",
+      "side": 1,
+      "message": "Chain verified building nvgpu out of tree for galen and concord, with no regressions to inline modules. Prior to this, the nvgpu linker line would trigger a shell command too long error.",
+      "revId": "ead5d931b11a57b20c91044923a876cc8f0c9cdb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
