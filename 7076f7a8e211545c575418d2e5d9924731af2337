@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3103bd96_3532b43d",
+        "filename": "arch/arm64/configs/tegra_android_defconfig",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2024-05-17T23:53:33Z",
+      "side": 1,
+      "message": "this is just regen, but it\u0027s fine",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 19
+      },
+      "revId": "7076f7a8e211545c575418d2e5d9924731af2337",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
