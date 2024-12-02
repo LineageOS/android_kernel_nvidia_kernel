@@ -2,7 +2,7 @@
 
 DTC_CPP_FLAGS += $(EXTRA_CPP_FLAGS)
 
-DTC_CPP_FLAGS += -DLINUX_VERSION=504 -DTEGRA_HOST1X_DT_VERSION=1
+DTC_CPP_FLAGS += -DLINUX_VERSION=510 -DTEGRA_HOST1X_DT_VERSION=1
 
 DTC_INCLUDE += $(tegra-dtstree)/soc/tegra/kernel-include
 DTC_INCLUDE += $(tegra-dtstree)/platform/tegra/common/kernel-dts
