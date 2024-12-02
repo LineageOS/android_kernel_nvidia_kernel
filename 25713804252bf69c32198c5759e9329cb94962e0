@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a1c5a11_48738b4e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-12-02T08:27:13Z",
+      "side": 1,
+      "message": "This is why t19x/t23x dt\u0027s started failing to build on 5.10 after the dai link update. Because I compare this define to \u003e\u003d 510, and the kernel was sending 504.",
+      "revId": "25713804252bf69c32198c5759e9329cb94962e0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
