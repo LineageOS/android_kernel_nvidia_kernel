@@ -96,7 +96,7 @@ static int max77620_onoff_probe(struct platform_device *pdev)
 
 	np = of_get_child_by_name(pdev->dev.parent->of_node, "onoff");
 	if (np && !of_device_is_available(np))
-		np = NULL;
+		return -ENODEV;
 
 	if (np)
 		ret = of_property_read_u32(np, "maxim,onoff-keycode",
