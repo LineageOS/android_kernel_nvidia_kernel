@@ -16,6 +16,24 @@
       "message": "just don\u0027t\nno OEM should ever touch fs/",
       "revId": "8232ddd9e3329e5b051ac569adc1188f7c502e93",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e6bfedf9_a536d363",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27741
+      },
+      "writtenOn": "2025-02-07T18:33:37Z",
+      "side": 1,
+      "message": "agreed, also we dont ship nvremote so probably not necessary\nit also worked before this change so clearly they did some utter garbage lol",
+      "parentUuid": "3f64b4a3_e95d159c",
+      "revId": "8232ddd9e3329e5b051ac569adc1188f7c502e93",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
