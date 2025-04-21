@@ -1,0 +1,18 @@
+// SPDX-License-Identifier: GPL-2.0
+/dts-v1/;
+
+#include "tegra210-p2571-0930.dts"
+
+/ {
+	model = "NVIDIA Shield TV Pro 2015";
+	compatible = "nvidia,p2571-0932", "nvidia,p2571-0930", "nvidia,tegra210";
+
+	sata@70020000 {
+		status = "okay";
+		phys = <&{/padctl@7009f000/pads/sata/lanes/sata-0}>;
+	};
+
+	mmc@700b0600 {
+		status = "disabled";
+	};
+};
