@@ -2,6 +2,8 @@
 
 # Enables support for device-tree overlays
 DTC_FLAGS_tegra210-p2371-2180 := -@
+DTC_FLAGS_tegra210-p2571-0930 := -@
+DTC_FLAGS_tegra210-p2571-0932 := -@
 DTC_FLAGS_tegra210-p3450-0000 := -@
 DTC_FLAGS_tegra210-p3541-0000 := -@
 DTC_FLAGS_tegra186-p2771-0000 := -@
@@ -18,6 +20,8 @@ dtb-$(CONFIG_ARCH_TEGRA_132_SOC) += tegra132-norrin.dtb
 dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-0000.dtb
 dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-2180.dtb
 dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2571.dtb
+dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2571-0930.dtb
+dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2571-0932.dtb
 dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p3450-0000.dtb
 dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p3541-0000.dtb
 dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-smaug.dtb

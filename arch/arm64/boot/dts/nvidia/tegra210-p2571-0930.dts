@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: GPL-2.0
+/dts-v1/;
+
+#include "tegra210-p2571.dts"
+
+/ {
+	model = "NVIDIA Shield TV 2015";
+	compatible = "nvidia,p2571-0930", "nvidia,tegra210";
+
+	hda@70030000 {
+		nvidia,model = "NVIDIA SHIELD TV APE";
+	};
+
+	sound {
+		label = "NVIDIA SHIELD TV APE";
+	};
+};
