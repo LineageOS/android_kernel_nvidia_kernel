@@ -1,0 +1,47 @@
+// SPDX-License-Identifier: GPL-2.0
+/dts-v1/;
+
+#include "tegra210b01.dtsi"
+#include "tegra210-p2894.dtsi"
+
+/ {
+	model = "NVIDIA Shield TV Pro 2019";
+	compatible = "nvidia,p2894-2551-b00", "nvidia,darcy", "nvidia,tegra210b01",
+		"nvidia,tegra210";
+
+	pinmux@700008d4 {
+		pinmux {
+			pex_l0_rst_n_pa0 {
+				nvidia,function = "pe0";
+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+			};
+			pex_l0_clkreq_n_pa1 {
+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+				nvidia,io-hv = <TEGRA_PIN_DISABLE>;
+			};
+			pex_wake_n_pa2 {
+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+				nvidia,io-hv = <TEGRA_PIN_DISABLE>;
+			};
+			wifi_wake_ap_ph2 {
+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+			};
+			pz1 {
+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+			};
+		};
+	};
+
+	i2c@7000d000 {
+		pmic@3c {
+			regulators {
+				sd2 {
+					regulator-min-microvolt = <1350000>;
+					regulator-max-microvolt = <1350000>;
+				};
+			};
+		};
+	};
+};
