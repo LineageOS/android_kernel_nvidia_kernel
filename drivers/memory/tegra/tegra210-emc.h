@@ -8,8 +8,11 @@
 
 #include <linux/clk.h>
 #include <linux/clk/tegra.h>
+#include <linux/interconnect-provider.h>
 #include <linux/io.h>
 #include <linux/platform_device.h>
+
+#include "tegra-emc-common.h"
 
 #define DVFS_FGCG_HIGH_SPEED_THRESHOLD				1000
 #define IOBRICK_DCC_THRESHOLD					2400
@@ -932,6 +935,11 @@ struct tegra210_emc {
 	} debugfs;
 
 	struct tegra210_clk_emc_provider provider;
+
+	struct icc_provider icc_provider;
+	int hw_opp_token;
+
+	struct tegra_emc_rate_requests reqs;
 };
 
 struct tegra210_emc_sequence {
