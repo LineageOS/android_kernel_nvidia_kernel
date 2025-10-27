@@ -20,9 +20,9 @@ obj-$(CONFIG_TEGRA30_EMC)  += tegra30-emc.o
 obj-$(CONFIG_TEGRA124_EMC) += tegra124-emc.o
 obj-$(CONFIG_TEGRA210_EMC_TABLE) += tegra210-emc-table.o
 obj-$(CONFIG_TEGRA210_EMC) += tegra210-emc.o
-obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186-emc.o
-obj-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra186-emc.o
-obj-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra186-emc.o
-obj-$(CONFIG_ARCH_TEGRA_264_SOC) += tegra186-emc.o
+obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186-emc.o tegra-emc-common.o
+obj-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra186-emc.o tegra-emc-common.o
+obj-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra186-emc.o tegra-emc-common.o
+obj-$(CONFIG_ARCH_TEGRA_264_SOC) += tegra186-emc.o tegra-emc-common.o
 
 tegra210-emc-y := tegra210-emc-core.o tegra210-emc-cc-r21021.o
