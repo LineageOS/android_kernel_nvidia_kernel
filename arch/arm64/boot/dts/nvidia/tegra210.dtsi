@@ -1031,6 +1031,7 @@
 
 		#iommu-cells = <1>;
 		#reset-cells = <1>;
+		#interconnect-cells = <1>;
 	};
 
 	emc: external-memory-controller@7001b000 {
@@ -1044,6 +1045,7 @@
 		nvidia,memory-controller = <&mc>;
 		operating-points-v2 = <&emc_icc_dvfs_opp_table>;
 
+		#interconnect-cells = <0>;
 		#cooling-cells = <2>;
 	};
 
