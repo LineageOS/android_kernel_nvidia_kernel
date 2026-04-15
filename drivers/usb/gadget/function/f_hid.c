@@ -461,14 +461,34 @@ static int hidg_setup(struct usb_function *f,
 	switch ((ctrl->bRequestType << 8) | ctrl->bRequest) {
 	case ((USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE) << 8
 		  | HID_REQ_GET_REPORT):
-		VDBG(cdev, "get_report\n");
+	{
+		__u8 report_type = value >> 8;
+		__u8 report_id = value & 0xFF;
 
-		/* send an empty report */
-		length = min_t(unsigned, length, hidg->report_length);
-		memset(req->buf, 0x0, length);
+		VDBG(cdev, "get_report: type=%d id=0x%x\n",
+		     report_type, report_id);
+
+		if (report_type == 3) {
+			/* Feature report. Windows queries Report ID 0xF2
+			 * for Contact Count Maximum on multitouch devices.
+			 * Return 24 (max contacts from descriptor). */
+			memset(req->buf, 0x0, length);
+			if (report_id == 0xF2 && length >= 2) {
+				((__u8 *)req->buf)[0] = report_id;
+				((__u8 *)req->buf)[1] = 24;
+				length = min_t(unsigned, length, 2);
+			} else {
+				if (length >= 1)
+					((__u8 *)req->buf)[0] = report_id;
+			}
+		} else {
+			length = min_t(unsigned, length, hidg->report_length);
+			memset(req->buf, 0x0, length);
+		}
 
 		goto respond;
 		break;
+	}
 
 	case ((USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE) << 8
 		  | HID_REQ_GET_PROTOCOL):
