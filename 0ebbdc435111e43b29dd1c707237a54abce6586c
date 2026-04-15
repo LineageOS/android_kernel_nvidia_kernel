@@ -16,6 +16,24 @@
       "message": "This needs split into separate commits. One concept per commit, please. There are multiple hid fixes, and then the scaler driver.\n\nAlso, the commit message explicitly calls out backporting. Those backported commits should be picked individually, retaining the original authorship.",
       "revId": "0ebbdc435111e43b29dd1c707237a54abce6586c",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7390af5a_8873247b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 36936
+      },
+      "writtenOn": "2026-04-15T06:21:25Z",
+      "side": 1,
+      "message": "Split into 5 individual commits: SET_IDLE/GET_IDLE, SET_REPORT, GET_REPORT feature reports, EP0 buffer increase, and scaler backlight driver. The SET_IDLE/GET_IDLE commit references upstream afcff6dc690e by Maxim Devaev. This change can be abandoned in favor of the new commits.",
+      "parentUuid": "13199f4e_26f0cc04",
+      "revId": "0ebbdc435111e43b29dd1c707237a54abce6586c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ],
   "submitRequirementResults": [
