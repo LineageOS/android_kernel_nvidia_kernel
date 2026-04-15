@@ -476,6 +476,16 @@ config BACKLIGHT_BD6107
 	help
 	  If you have a Rohm BD6107 say Y to enable the backlight driver.
 
+config BACKLIGHT_SCALER
+	tristate "Jamboard MStar scaler virtual backlight"
+	help
+	  Virtual backlight driver for the Google Jamboard. Creates a
+	  /sys/class/backlight/scaler/ node that the Android Lights HAL
+	  auto-discovers. Actual brightness control is performed by the
+	  scalerd userspace daemon via UART to the MStar MST9U23T1 scaler.
+
+	  Say Y if building for the Google Jamboard (baracus/baracus_tab).
+
 endif # BACKLIGHT_CLASS_DEVICE
 
 endif # BACKLIGHT_LCD_SUPPORT

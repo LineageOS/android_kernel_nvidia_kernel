@@ -461,14 +461,48 @@ static int hidg_setup(struct usb_function *f,
 	switch ((ctrl->bRequestType << 8) | ctrl->bRequest) {
 	case ((USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE) << 8
 		  | HID_REQ_GET_REPORT):
-		VDBG(cdev, "get_report\n");
+	{
+		__u8 report_type = value >> 8;
+		__u8 report_id = value & 0xFF;
 
-		/* send an empty report */
-		length = min_t(unsigned, length, hidg->report_length);
-		memset(req->buf, 0x0, length);
+		VDBG(cdev, "get_report: type=%d id=0x%x\n",
+		     report_type, report_id);
+
+		if (report_type == 3) {
+			/* Feature report request.
+			 * For multitouch devices, Windows queries Feature
+			 * Report 0xF2 to get the Contact Count Maximum.
+			 * We must return a non-zero value or Windows will
+			 * ignore all touch input.
+			 *
+			 * Search the report descriptor for the feature report
+			 * that contains Contact Count Maximum (Usage 0x55,
+			 * Usage Page 0x0D) and return max_contacts.
+			 *
+			 * For simplicity, we respond to known report IDs:
+			 * 0xF2: Contact Count Maximum feature report
+			 */
+			memset(req->buf, 0x0, length);
+			if (report_id == 0xF2 && length >= 2) {
+				((__u8 *)req->buf)[0] = report_id;
+				/* Contact Count Maximum = 24 (from descriptor
+				 * Logical Maximum 0x18) */
+				((__u8 *)req->buf)[1] = 24;
+				length = min_t(unsigned, length, 2);
+			} else {
+				/* Unknown feature report - return zeros */
+				if (length >= 1)
+					((__u8 *)req->buf)[0] = report_id;
+			}
+		} else {
+			/* Input report (type 1) or Output report (type 2) */
+			length = min_t(unsigned, length, hidg->report_length);
+			memset(req->buf, 0x0, length);
+		}
 
 		goto respond;
 		break;
+	}
 
 	case ((USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE) << 8
 		  | HID_REQ_GET_PROTOCOL):
@@ -477,8 +511,33 @@ static int hidg_setup(struct usb_function *f,
 		break;
 
 	case ((USB_DIR_OUT | USB_TYPE_CLASS | USB_RECIP_INTERFACE) << 8
+		  | HID_REQ_SET_IDLE):
+		VDBG(cdev, "set_idle\n");
+		/* Accept SET_IDLE with no data phase (wLength=0).
+		 * Required for Windows HID enumeration. */
+		length = 0;
+		goto respond;
+		break;
+
+	case ((USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE) << 8
+		  | HID_REQ_GET_IDLE):
+		VDBG(cdev, "get_idle\n");
+		length = min_t(unsigned, length, 1);
+		memset(req->buf, 0, length);
+		goto respond;
+		break;
+
+	case ((USB_DIR_OUT | USB_TYPE_CLASS | USB_RECIP_INTERFACE) << 8
 		  | HID_REQ_SET_REPORT):
 		VDBG(cdev, "set_report | wLength=%d\n", ctrl->wLength);
+		/* Accept SET_REPORT requests (needed for Windows multitouch
+		 * feature reports like Contact Count Maximum). We acknowledge
+		 * the data phase but discard the payload. */
+		if (length > 0) {
+			req->complete = hidg_set_report_complete;
+			req->context  = hidg;
+			goto respond;
+		}
 		goto stall;
 		break;
 

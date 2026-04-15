@@ -50,8 +50,8 @@
  */
 #define USB_GADGET_DELAYED_STATUS       0x7fff	/* Impossibly large value */
 
-/* big enough to hold our biggest descriptor */
-#define USB_COMP_EP0_BUFSIZ	1024
+/* big enough to hold our biggest descriptor (HID report desc can be >2KB) */
+#define USB_COMP_EP0_BUFSIZ	4096
 
 /* OS feature descriptor length <= 4kB */
 #define USB_COMP_EP0_OS_DESC_BUFSIZ	4096
