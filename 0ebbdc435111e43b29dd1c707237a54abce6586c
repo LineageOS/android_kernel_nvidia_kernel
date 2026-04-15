@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "13199f4e_26f0cc04",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2026-04-15T05:28:33Z",
+      "side": 1,
+      "message": "This needs split into separate commits. One concept per commit, please. There are multiple hid fixes, and then the scaler driver.\n\nAlso, the commit message explicitly calls out backporting. Those backported commits should be picked individually, retaining the original authorship.",
+      "revId": "0ebbdc435111e43b29dd1c707237a54abce6586c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
