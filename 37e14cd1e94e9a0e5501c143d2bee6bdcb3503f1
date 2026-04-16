@@ -16,6 +16,23 @@
       "message": "is it based on that commit, or a pick of it?\n\nIf it\u0027s close enough to be a pick, just pick the commit and keep the authorship... that applies to all of these.",
       "revId": "37e14cd1e94e9a0e5501c143d2bee6bdcb3503f1",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d49968b0_10ffa044",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2026-04-16T16:20:27Z",
+      "side": 1,
+      "message": "https://github.com/torvalds/linux/commit/afcff6dc690e24d636a41fd4bee6057e7c70eebd",
+      "revId": "37e14cd1e94e9a0e5501c143d2bee6bdcb3503f1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
