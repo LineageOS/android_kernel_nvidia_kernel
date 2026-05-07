@@ -1888,6 +1888,17 @@ devicetree_library(
     deps = ["//common:dtc_includes_aarch64"],
 )
 
+devicetree_library(
+    name = "all_nvidia_dts",
+    hdrs = glob([
+        "arch/arm64/boot/dts/nvidia/*.dtsi",
+        "arch/arm64/boot/dts/nvidia/*.dts",
+    ]),
+    includes = ["arch/arm64/boot/dts/nvidia"],
+    visibility = ["//vendor:__subpackages__"],
+    deps = [":dtc_includes_aarch64"],
+)
+
 ddk_headers(
     name = "all_headers_allowlist_vivo",
     hdrs = [
