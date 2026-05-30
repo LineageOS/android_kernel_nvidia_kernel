@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "88d83b72_f730f49a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2026-05-30T05:09:08Z",
+      "side": 1,
+      "message": "This isn\u0027t near finalized, but queuing for merging on 6.12 just to have a baseline to build the stub b01 dtb\u0027s against.",
+      "revId": "77f23eb4fbbeec0811ddb41068d5d35da7df3c30",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
