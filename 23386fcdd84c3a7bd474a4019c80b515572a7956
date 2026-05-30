@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d661e33c_9161d3a1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2026-05-30T05:10:17Z",
+      "side": 1,
+      "message": "This is only used for t210b01 devices, which aren\u0027t targeted for full support on 6.12. But queuing for merge since the android device tree expects the module.",
+      "revId": "23386fcdd84c3a7bd474a4019c80b515572a7956",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
