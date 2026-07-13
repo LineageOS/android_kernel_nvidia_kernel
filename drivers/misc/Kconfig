@@ -817,6 +817,13 @@ config BM92TXX
 	  Type-C connection IC. This driver provies common support for power
 	  negotiation, USB ID detection and Hot-plug-detection on Display Port.
 
+config MSTAR_SCALER
+	bool "MStar Scaler"
+	select SERIAL_DEV_BUS
+	select BACKLIGHT_CLASS_DEVICE
+	help
+	  Support the MStar scaler over UART, used in Google Jamboard
+
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
 source "drivers/misc/cb710/Kconfig"

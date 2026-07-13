@@ -82,3 +82,4 @@ $(obj)/lkdtm_rodata_objcopy.o: $(obj)/lkdtm_rodata.o FORCE
 obj-$(CONFIG_CPULOAD_MONITOR)	+= cpuload.o
 obj-y				+= inter-tegra/
 obj-$(CONFIG_BM92TXX)		+= bm92txx.o
+obj-$(CONFIG_MSTAR_SCALER)		+= mstar-scaler-serial.o
