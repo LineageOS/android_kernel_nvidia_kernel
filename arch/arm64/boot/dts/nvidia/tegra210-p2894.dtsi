@@ -4,7 +4,6 @@
 #include <dt-bindings/input/gpio-keys.h>
 #include <dt-bindings/mfd/max77620.h>
 #include <dt-bindings/pinctrl/pinctrl-tegra.h>
-#include "tegra210.dtsi"
 
 / {
 	aliases {
