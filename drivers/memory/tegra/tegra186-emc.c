@@ -9,6 +9,7 @@
 #include <linux/mod_devicetable.h>
 #include <linux/of_platform.h>
 #include <linux/platform_device.h>
+#include <linux/pm_opp.h>
 
 #include <soc/tegra/bpmp.h>
 #include "mc.h"
@@ -195,12 +196,15 @@ static int tegra186_emc_get_emc_dvfs_latency(struct tegra186_emc *emc)
 		if (emc->dvfs[i].rate > emc->debugfs.max_rate)
 			emc->debugfs.max_rate = emc->dvfs[i].rate;
 
+		dev_pm_opp_add(emc->dev, emc->dvfs[i].rate, 0);
+
 		dev_dbg(emc->dev, "  %2u: %lu Hz -> %lu us\n", i,
 			emc->dvfs[i].rate, emc->dvfs[i].latency);
 	}
 
 	err = clk_set_rate_range(emc->clk, emc->debugfs.min_rate, emc->debugfs.max_rate);
 	if (err < 0) {
+		dev_pm_opp_remove_all_dynamic(emc->dev);
 		dev_err(emc->dev, "failed to set rate range [%lu-%lu] for %pC\n",
 			emc->debugfs.min_rate, emc->debugfs.max_rate, emc->clk);
 		return err;
@@ -379,6 +383,8 @@ static void tegra186_emc_remove(struct platform_device *pdev)
 	struct tegra186_emc *emc = platform_get_drvdata(pdev);
 
 	debugfs_remove_recursive(emc->debugfs.root);
+
+	dev_pm_opp_remove_all_dynamic(emc->dev);
 
 	mc->bpmp = NULL;
 	tegra_bpmp_put(emc->bpmp);
