@@ -34,6 +34,24 @@
       "parentUuid": "21082d1c_fa43d1c6",
       "revId": "a7f0d58b8c59435ae8a1c5a0c60d08f6e277e2ad",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3ba08891_f9bf347a",
+        "filename": "drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 27741
+      },
+      "writtenOn": "2026-09-19T21:36:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "488f70dd_a8f70ea4",
+      "revId": "a7f0d58b8c59435ae8a1c5a0c60d08f6e277e2ad",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
