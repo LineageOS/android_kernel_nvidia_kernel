@@ -34,6 +34,24 @@
       "parentUuid": "0eefb6f7_68c43db6",
       "revId": "2114fde5619c46faa3d75eba5326158edf492795",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "143ba55c_1ed244c6",
+        "filename": "arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts",
+        "patchSetId": 4
+      },
+      "lineNbr": 523,
+      "author": {
+        "id": 27741
+      },
+      "writtenOn": "2026-09-19T21:36:53Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "18d85683_0395deb9",
+      "revId": "2114fde5619c46faa3d75eba5326158edf492795",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
