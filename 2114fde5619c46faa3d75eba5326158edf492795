@@ -16,6 +16,24 @@
       "message": "set role-switch-default-mode to peripheral?",
       "revId": "2114fde5619c46faa3d75eba5326158edf492795",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18d85683_0395deb9",
+        "filename": "arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts",
+        "patchSetId": 4
+      },
+      "lineNbr": 523,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2026-09-19T21:19:12Z",
+      "side": 0,
+      "message": "No need. I derped this kinda hard too on the predecessor to this change on lkml. The extcon drivers set initial state. There\u0027s no need to set default-mode as long as the extcon driver is sane.",
+      "parentUuid": "0eefb6f7_68c43db6",
+      "revId": "2114fde5619c46faa3d75eba5326158edf492795",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
