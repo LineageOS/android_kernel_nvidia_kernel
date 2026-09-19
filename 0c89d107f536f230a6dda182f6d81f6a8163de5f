@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5535190f_83d8b09a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27741
+      },
+      "writtenOn": "2026-09-19T21:14:33Z",
+      "side": 1,
+      "message": "\u003emodule\n\u003eno removal or exit\nyuck",
+      "revId": "0c89d107f536f230a6dda182f6d81f6a8163de5f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
