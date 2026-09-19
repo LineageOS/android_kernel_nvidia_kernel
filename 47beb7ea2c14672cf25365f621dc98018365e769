@@ -16,6 +16,24 @@
       "message": "why pollute soc dtsi w this\nperhaps do what t210 and others do with separate opp dtsi",
       "revId": "47beb7ea2c14672cf25365f621dc98018365e769",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56e0b212_b87387b7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2026-09-19T21:23:42Z",
+      "side": 1,
+      "message": "This was based on tegra234. Just guessing, but it\u0027s probably because it\u0027s only the cpu opp list and not all the interconnect stuff as well. Since said interconnect stuff is all in bpmp now.",
+      "parentUuid": "3ad6f38c_d537218c",
+      "revId": "47beb7ea2c14672cf25365f621dc98018365e769",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
