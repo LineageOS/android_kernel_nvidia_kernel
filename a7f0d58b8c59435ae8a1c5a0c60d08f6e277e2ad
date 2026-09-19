@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "21082d1c_fa43d1c6",
+        "filename": "drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 27741
+      },
+      "writtenOn": "2026-09-19T21:12:09Z",
+      "side": 1,
+      "message": "do we need to reprogram regs on resume or will devfreq resume reprogram? Are values cached thru sc7 when gpu powered off?",
+      "revId": "a7f0d58b8c59435ae8a1c5a0c60d08f6e277e2ad",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
