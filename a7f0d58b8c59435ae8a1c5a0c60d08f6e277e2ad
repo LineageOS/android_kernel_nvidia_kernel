@@ -16,6 +16,24 @@
       "message": "do we need to reprogram regs on resume or will devfreq resume reprogram? Are values cached thru sc7 when gpu powered off?",
       "revId": "a7f0d58b8c59435ae8a1c5a0c60d08f6e277e2ad",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "488f70dd_a8f70ea4",
+        "filename": "drivers/gpu/drm/nouveau/nvkm/subdev/clk/gk20a_devfreq.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2026-09-19T21:21:18Z",
+      "side": 1,
+      "message": "To my knowledge, the devfreq backend handles that. But I\u0027ve not tested much of sc7. Last I tried, there were other issues like xusb imploding hard enough to panic the kernel... This has been merged upstream, so if a fix is needed, it will be a followup commit. It\u0027s certainly possible that more will be needed.",
+      "parentUuid": "21082d1c_fa43d1c6",
+      "revId": "a7f0d58b8c59435ae8a1c5a0c60d08f6e277e2ad",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
